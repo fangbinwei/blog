@@ -86,7 +86,7 @@ function compression(req, res, next) {
 ---
 > Connect is an extensible HTTP server framework for node using "plugins" known as middleware
 
-connect是express的基础, 它们middleware的实现原理相同. 早期的express是直接引用了connect, 后来将connect集成到express内部.
+connect是express的基础, 它们middleware的实现原理相同. 早期的express中间件实现部分是直接引用了connect包, 后来express自己实现来中间件的逻辑, 实现方式和connect基本一致.
 
 ### connect示例
 ```js
@@ -279,16 +279,16 @@ http.createServer(app).listen(3000)
 2. 有简单的路由判断, 有'子路由'的功能
 
 可能不够优雅的地方: 
-1. 对响应的回复耦合在中间件中.
+1. 响应请求的过程耦合在中间件中.
 2. 错误处理还是差点感觉, 同步代码的错误, 可以不管, 由最外层包裹中间件的try catch进行捕捉, 异步代码的错误, 需要传给next(err).
 
 ## express 4.x
 ---
-express4.x之前, 直接依赖了connect包, 4.x之后, 将connect集成到了express中.
+express4.x之前, 直接依赖了connect包, 4.x之后, 直接实现了中间件的逻辑.
 
-### express相比connect
+### express对比connect
 - 对node原生req, res进行了包装和扩展, 使用原型链, 乍一看, 还是让人蛮眼花缭乱的.
-- 集成了一些常用的中间件. (bodyParser.json, serve-static等)
+- express4.x之前内置了常用的中间件( built-in middleware), 4.x以后就精简了绝大部分, 仅保留了若干个, (bodyParser.json/urlencoded, serve-static)
 - 将router的逻辑单独抽出来, 优化了代码结构
 - 升级了的路由匹配
 
@@ -352,15 +352,43 @@ app.use((ctx, next) => {
 
 不同于connect, express, koa的next返回的是一个Promise对象.
 
-*正确书写koa中间件, 可以保证代码的执行顺序.*
+*正确书写koa中间件, 可以保证响应请求时, 代码的执行顺序.*
 
 #### 中间件处理示意图
-![koa middleware](_v_images/koamiddlew_1540157879_974579072.png)
+![koa middleware](_v_images/koamiddlew_1541006132_843532784.png)
 
 koa的中间件处理方式, 和connect的本质区别在于其next()函数, koa的next()函数返回的是promise对象, 只有在该promise为fulfilled的时候, 才会执行`await next()`以后的代码.
 
 > async 函数中可能会有 await 表达式，这会使 async 函数暂停执行，等待表达式中的 Promise 执行完成后才会继续执行 async 函数并返回. 
 > await  操作符用于等待一个Promise 对象
+
+#### 考虑这样一种情况, express/koa 实现返回json格式的响应主体
+1. express实现该功能
+定义res.json()方法
+```js
+app.use((req, res) => {
+    res.json({foo: 'bar'})
+})
+res.json = function (data) { // 此res非 箭头函数中的res
+    this.set('Content-Type', 'application/json')
+  res.end(JSON.stringify(data))
+}
+```
+
+2. koa实现该功能
+```js
+app.use((ctx, next) => {
+    ctx.body = {foo: 'bar'}  // content-type 在body 的setter中会被设置
+})
+// koa 默认响应函数
+function respond (ctx) {
+// ctx.body不是Buffer/String/Stream
+res.end(JSON.stringify(ctx.body))
+}
+```
+默认响应函数能够保证, 它拿到的ctx.body是最终不会再变动的
+
+可以看出express 和 koa不同的理念, express需要你确定要响应的内容, 并调用方法返回json格式的主体, 而koa不需要想太多, 设置ctx.body就行了.
 
 ### 错误处理
 使用aync, await写法, 你可以自己定义一个错误处理中间件, 所有中间件抛出的错误, 让最外层定义的中间件来处理(当然koa其实也自带默认的错误处理函数)
@@ -401,6 +429,21 @@ app.use(async (ctx, next) => {
   await next()
 })
 ```
+### koa2对比express
+#### 1. 构建项目上
+- 更加轻量级, 当你使用koa构建项目的时候, 它只是帮你搭了一个空房子, 你不断往里面放置你所需要的家具. 而用express新构建的项目更像是已经有一些家具的房子. 相比较来说koa的可定制性更高.
+#### 2. 处理请求和响应上
+- koa没有改动node的请求和响应对象req, res, 而是包装了自己的请求响应对象, request, response, 你在使用的时候可以很明确地知道自己在使用koa提供的方法/属性(即便它可能就是直接调用的node原生方法/属性). 而express通过原型链的方式为req, res扩展方法/属性, 在使用的过程中, 会比较懵.
+#### 3. flow of the middleware chain
+- koa的next()配合async/await 使得代码执行顺序很明了. express则没有这个优势, next()之后的代码执行的时机要具体情况具体分析, 因此, 不会在其中间件的next()之后写代码, 因为意义不大. 而koa由于代码执行顺序可控, 其在所有中间件执行完后, 会有默认的响应函数来响应请求.
+
+#### 4. 错误处理
+- koa在错误处理的时候可以很方便地进行全局错误捕获(本质上是第3点所导致的, 因为代码执行顺序可控). express则使用node式的错误处理方式, 将错误作为第一个参数传给next()函数.
+#### 5. 社区
+- express发展较久, 各种中间件应有尽有, 而且质量禁得起考验. koa的中间件数量相对来说没有express更丰富, 也许存在着需要自己造轮子, 或者已有轮子有bug的情况?
+
+#### 6.简单的性能对比
+
 ### koa总结
 1. 构建了ctx.request/response, 并没有改动原生的node req, res.
 2. 异步代码执行顺序可控.
@@ -416,6 +459,15 @@ app.use(async (ctx, next) => {
 | 错误处理        |  async/await 配合 try/catch   |  同connect     |  中规中矩利用next(err)        |
 |  集成额外功能     |  无   |  jsonp/ template等      |     无    |
 
+## express 和koa怎么选择?
+
+1. 这是一个全新的项目? 可以尝试更轻量级的koa. 
+2. 项目是基于已有的express项目, 继续用express 吧...
+3. 对性能要求怎么样, koa的性能对比express还是有一点优势的.
+4. 自身是倾向于使用一个轻量级的框架, 用到什么功能就加什么, 还是倾向于使用一个本身具备一些常用功能的框架.
+5. 就为了搭个简单的测试api; 网页热重载, 就express.
+
+仅代表个人观点...
 
 ## 参考文献
 > https://medium.com/@selvaganesh93/how-node-js-middleware-works-d8e02a936113
@@ -423,3 +475,6 @@ app.use(async (ctx, next) => {
 > https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function
 > https://github.com/brunoyang/blog/issues/5
 > https://cnodejs.org/topic/5b9a5867ce9d14c2254dfa13
+> https://github.com/koajs/koa/issues/797
+> https://raygun.com/blog/koa-vs-express-2018/
+> https://medium.com/@kennykoch47/should-you-choose-koa-over-express-686b6bcc7b4d

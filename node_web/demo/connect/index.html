@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>axios</title>
+</head>
+<body>
+  <pre>
+      axios({
+        method: 'post',
+        url: 'http://127.0.0.1:3001/foo',
+        data: {
+          firstName: 'foo',
+          lastName: 'bar'
+        }
+      });
+  </pre>
+  
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    axios({
+      method: 'post',
+      url: '/foo',
+      data: {
+        firstName: 'foo',
+        lastName: 'bar'
+      }
+    })
+    .then(({data}) => {
+      console.log(data)
+      let elem = document.createElement('h1')
+      let text = document.createTextNode(JSON.stringify(data))
+      elem.appendChild(text)
+      document.body.append(elem)
+    })
+  </script>
+</body>
+</html>

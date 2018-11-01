@@ -38,6 +38,7 @@ server.listen(port, hostname, () => {
 - ...
 
 可以发现, 其实这些任务其实可以排个序, 中间件就是帮助我们完成这个任务.
+
 ## 中间件
 ---
 ![middleware](_v_images/middleware_1540233808_732314898.png)
@@ -151,7 +152,7 @@ http.createServer(function app (req, res) {
 #### 同步代码示例图1.0
 ![connect_sync](_v_images/connect_sy_1539626102_272386920.png)
 
-stack中存放这所use的中间件, 当请求到达时, app函数调用内部的next(), 该next()函数实现如下功能:
+stack中存放着通过use加入中间件, 当请求到达时, app函数调用内部的next(), 该next()函数实现如下功能:
 1. 读取stack
 2. 路径匹配 ? 调用stack[index].handler(req, res, next) : 继续调用next()
 
@@ -183,6 +184,7 @@ app.use((req, res, next) => {
 //        ->final middleware
 ```
 ![](_v_images/1540155763_294155741.png)
+(middleware2 中的next()可有可无)
 
 异步代码执行的顺序, 不同于同步代码.
 
@@ -273,6 +275,44 @@ http.createServer(app).listen(3000)
 ![](_v_images/1540239367_1948215195.png)
 
 ### 代码演示, 解析前端发送的请求, content-type: application/json
+```js
+const connect = require('connect')
+const fs = require('fs')
+const path = require('path')
+
+const app = connect()
+
+app.use((req, res, next) => {
+  let type = req.headers['content-type'] || ''
+  type = type.split(';')[0]
+  if (type !== 'application/json') return next()
+  let data = ''
+
+  req.on('data', (chunk) => {
+    data += chunk
+  })
+  req.on('end', () => {
+    req.body = JSON.parse(data)
+    next()
+  })
+})
+
+app.use('/home', (req, res) => {
+  console.log('req.url', req.url)
+  fs.createReadStream(path.resolve(__dirname , './index.html')).pipe(res)
+})
+
+app.use('/foo', (req, res, next) => {
+  console.log(req.body)
+  res.setHeader('Content-Type', 'application/json')
+  res.end(JSON.stringify({
+    resFirstName: req.body.firstName,
+    resLastName: req.body.lastName
+  }))
+})
+
+app.listen(3001)
+```
 
 ### connect 总结
 1. 实现了中间件的逻辑处理.
@@ -291,6 +331,7 @@ express4.x之前, 直接依赖了connect包, 4.x之后, 直接实现了中间件
 - express4.x之前内置了常用的中间件( built-in middleware), 4.x以后就精简了绝大部分, 仅保留了若干个, (bodyParser.json/urlencoded, serve-static)
 - 将router的逻辑单独抽出来, 优化了代码结构
 - 升级了的路由匹配
+- 提供诸如app.get(), app.post(), app.all()等简便方法
 
 采用正则匹配来处理路由路径, 路由路径的结构类似vue-router
 ```js
@@ -442,11 +483,19 @@ app.use(async (ctx, next) => {
 #### 5. 社区
 - express发展较久, 各种中间件应有尽有, 而且质量禁得起考验. koa的中间件数量相对来说没有express更丰富, 也许存在着需要自己造轮子, 或者已有轮子有bug的情况?
 
-#### 6.简单的性能对比
+#### 6.性能
+个人看法: 虽然koa2比express更轻量, 但是从express 的 callback style 到 koa 的Promise style, 会损失一部分性能
+
+暂无很有说服力的压力测试实验 
+
+网上有有些压力测试, 测试结果是koa2性能更好.
+
+> https://github.com/jkyberneees/ana#performance-comparison-framework-overhead
+> https://cnodejs.org/topic/5728267f3f27a7c841bcb88e
 
 ### koa总结
 1. 构建了ctx.request/response, 并没有改动原生的node req, res.
-2. 异步代码执行顺序可控.
+2. 异步的情况下, 代码执行顺序可控.
 3. 利用async await可以优雅地进行错误处理.
 4. 代码精简, 没有路由功能.
 5. 在中间件执行完后, 有默认的响应函数, 若中间件中没有响应请求, 响应函数会主要根据ctx.body响应请求. (connect, express都必须在中间件中调用res.end())
@@ -460,14 +509,14 @@ app.use(async (ctx, next) => {
 |  集成额外功能     |  无   |  jsonp/ template等      |     无    |
 
 ## express 和koa怎么选择?
+一些个人观点
 
-1. 这是一个全新的项目? 可以尝试更轻量级的koa. 
-2. 项目是基于已有的express项目, 继续用express 吧...
-3. 对性能要求怎么样, koa的性能对比express还是有一点优势的.
-4. 自身是倾向于使用一个轻量级的框架, 用到什么功能就加什么, 还是倾向于使用一个本身具备一些常用功能的框架.
-5. 就为了搭个简单的测试api; 网页热重载, 就express.
+1. 项目是基于已有的express项目, 继续用express 吧...
+2. callback style 和 promise style的倾向
+3. 自身是倾向于使用一个轻量级的框架, 用到什么功能就加什么, 还是倾向于使用一个本身具备一些常用功能的框架.
+4. 项目的用途
+5. 性能
 
-仅代表个人观点...
 
 ## 参考文献
 > https://medium.com/@selvaganesh93/how-node-js-middleware-works-d8e02a936113

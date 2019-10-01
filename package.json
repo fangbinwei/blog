@@ -1,0 +1,37 @@
+{
+  "name": "thinking",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "vuepress dev .",
+    "docs:build": "vuepress build ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fangbinwei/Thinking.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fangbinwei/Thinking/issues"
+  },
+  "homepage": "https://github.com/fangbinwei/Thinking#readme",
+  "devDependencies": {
+    "cz-customizable": "^5.3.0",
+    "ghooks": "^2.0.4",
+    "shelljs": "^0.8.3"
+  },
+  "dependencies": {
+    "vuepress": "^1.0.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": "./cz-config.js"
+    }
+  }
+}

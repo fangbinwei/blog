@@ -1,4 +1,4 @@
-name: Node CI
+name: deploy
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         
     - name: build vuepress to github page
-      uses: JamesIves/github-pages-deploy-action@maste
+      uses: JamesIves/github-pages-deploy-action@master
       env:
         CI: true
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN_GH_PAGE }}

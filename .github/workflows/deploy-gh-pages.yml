@@ -1,29 +1,30 @@
-name: deploy
+name: deploy github pages
 
-on:
-  push:
-    branches:
-    - master
+on: [push]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [12.x]
+
     steps:
     - uses: actions/checkout@v1
-    
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-        
+      
     - name: build vuepress to github page
       uses: JamesIves/github-pages-deploy-action@master
       env:
         CI: true
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN_GH_PAGE }}
-        BASE_BRANCH: master # The branch the action should deploy from.
-        BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: .vuepress/dist # The folder the action should deploy.
+        BASE_BRANCH: master
+        BRANCH: gh-pages
+        FOLDER: .vuepress/dist
         BUILD_SCRIPT: npm install && npm run docs:build

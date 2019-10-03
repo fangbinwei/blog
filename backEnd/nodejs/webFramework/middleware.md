@@ -1,6 +1,9 @@
+---
+date: 2018-10-23
+permalink: /:year-:month-:day-:slug
+---
 # node http
 ## 使用node搭建服务器
----
 ```js
 const http = require('http');
 
@@ -40,7 +43,6 @@ server.listen(port, hostname, () => {
 可以发现, 其实这些任务其实可以排个序, 中间件就是帮助我们完成这个任务.
 
 ## 中间件
----
 ![middleware](./_v_images/middleware_1540233808_732314898.png)
 
 中间件可以把服务端的操作解耦开来. 不同的中间件各司其职, 如上图——使用中间件实现一个逻辑简单的服务器, static cache中间件可以响应静态文件, router中间件可以用来响应API.
@@ -77,14 +79,12 @@ function compression(req, res, next) {
 一个完善的compression中间件应该还包括, 自适应请求的Accept-Encoding首部; 提供一个threshold阈值, 响应主体大于该阈值再进行压缩等功能.
 
 # connect -> express -> koa (3.6.6, 4.x, 2.5.1)
----
 ## 作者
 > TJ Holowaychuk，程序员兼艺术家，Koa、Co、Express、jade、mocha、node-canvas、commander.js等知名开源项目的创建和贡献者
 
 *任何一个做node.js开发的人, 一定都直接或间接引用过他写的库*
 
 ## connect
----
 > Connect is an extensible HTTP server framework for node using "plugins" known as middleware
 
 connect是express的基础, 它们middleware的实现原理相同. 早期的express中间件实现部分是直接引用了connect包, 后来express自己实现来中间件的逻辑, 实现方式和connect基本一致.
@@ -323,7 +323,6 @@ app.listen(3001)
 2. 错误处理还是差点感觉, 同步代码的错误, 可以不管, 由最外层包裹中间件的try catch进行捕捉, 异步代码的错误, 需要传给next(err).
 
 ## express 4.x
----
 express4.x之前, 直接依赖了connect包, 4.x之后, 直接实现了中间件的逻辑.
 
 ### express对比connect
@@ -343,7 +342,6 @@ app.get('/users/:userId/books/:bookId', function (req, res) {
 express更像是connect的升级版本, 底层对中间件的处理, 错误的处理, 差别并不大.
 
 ## koa
----
 ### koa示例
 ```js
 const Koa = require('koa');

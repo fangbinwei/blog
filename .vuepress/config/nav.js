@@ -9,7 +9,7 @@ module.exports = [
       {
         text: '框架',
         items: [
-          { text: 'Vue', link: '/frontEnd/framework/vue/vueLife.md' },
+          { text: 'Vue', link: '/frontEnd/framework/vue/vueRender.md' },
           { text: 'React', link: '/frontEnd/framework/react/reactLife.md' }
         ]
       },

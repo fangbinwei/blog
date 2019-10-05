@@ -5,7 +5,7 @@ module.exports = {
       title: 'Vue',
       sidebarDepth: 0,
       collapsable: false,
-      children: ['vue/vueLife.md']
+      children: ['vue/vueRender.md']
     },
     {
       title: 'React',

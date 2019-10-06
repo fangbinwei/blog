@@ -1,11 +1,13 @@
 # render流程
+
+根组件在实例化后, 调用$mount来挂载组件, 从而开始组件的render, patch
+
 ## _render()
 
 Vue内部使用vm._render()来生成vnode, 下面是是部分关键代码
 
 关于virtual dom, 尤雨溪在知乎的一个回答很值得一看
-> 网上都说操作真实 DOM 慢，但测试结果却比 React 更快，为什么？ - 尤雨溪的回答 - 知乎
-https://www.zhihu.com/question/31809713/answer/53544875
+> [网上都说操作真实 DOM 慢，但测试结果却比 React 更快，为什么？ - 尤雨溪的回答 - 知乎](https://www.zhihu.com/question/31809713/answer/53544875)
 
 **src/core/instance/render.js**
 ```js
@@ -60,12 +62,25 @@ export function renderMixin (Vue: Class<Component>) {
 ```
 
 可以看到`_render`的主要逻辑是调用`vnode = render.call(vm._renderProxy, vm.$createElement)`
+:::tip
+`vm.$createElement`也就是常说的h函数
+:::
 
 `render`有两个来源
 - 用户写的render函数
 - .vue文件中template编译而来, 它内部会使用`vm._c`而非`render(h)`函数的`h`参数(即`vm.$createElement`)
 
+:::tip
+编译出来的render函数类似这种, `with(this){return [_c('div',[[_c('span',[_v("1")]),_v(" "),_c('span',[_v("2")])]],2)]}`
+:::
+
 ## createElement()
+render函数通过调用h函数来生成vnode, h函数是调用了createElement
+
+```js
+  vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
+```
+
 **src/core/vdom/create-element.js**
 ```js
 export function createElement (
@@ -76,7 +91,7 @@ export function createElement (
   normalizationType: any,
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
- // 允许不传入data, 直接传入children
+ // 允许不传入data, 直接传入children(函数重载)
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children
     children = data
@@ -89,10 +104,7 @@ export function createElement (
 }
 ```
 
-```js
-  vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
-```
-对于用户定义的`render`函数, 需要进行`normailize`, 并且设置`normalizationType`, 因此在内部调用的`_createElement`的参数`tag,data,children`是由开发者传入的
+对于用户定义的`render`函数, 需要进行`normailize`, 并且设置`normalizationType`, 因此在内部调用的`_createElement`的参数`tag,data,children`是由开发者传入的, 而`normalizationType`开发者传入也是会被覆盖的, 其是在`alwaysNormalize`为`false`使用的(作为编译出的render函数的参数)
 
 ## _createElement()
 ```js
@@ -126,6 +138,7 @@ export function _createElement (
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
+  // DOM tag/ 局部注册的组件
   if (typeof tag === 'string') {
   //...
   } else {
@@ -145,11 +158,9 @@ export function _createElement (
 }
 ```
 
-`_createElement`首先对children进行格式化
+`_createElement`首先对children进行格式化. 需要格式化成`Array<VNode>`,
 
-为什么需要对children进行格式化呢?
-
-比如, 手写的render函数, 对于text VNodes, 传入的是string, 而构建virtual dom tree的时候, children需要传入`Array<VNode>`, 因此要根据string创建text VNodes.
+比如, 手写的render函数, 对于text VNodes, 传入的是string, 需要要根据string创建text VNodes.
 
 ```js
 new Vue({
@@ -175,7 +186,8 @@ new Vue({
  </template>
 ```
 
-在创建div对应的vnode的时候, 其children为`[[vnodespan1_1, vnodespan1_2], [vnodespan2_1, vnodespan2_2]`, 所以需要将其flatten成长度为4的数组
+在创建div对应的vnode的时候, 其children为`[[vnodespan1_1, vnodespan1_2], [vnodespan2_1, vnodespan2_2]`(v-for指令生成), 所以需要将其flatten成长度为4的数组
+
 :::tip
 `v-for`内部由函数`renderList`(**src/core/instance/render-helpers/render-list.js**)实现, 其返回一个数组
 :::
@@ -184,15 +196,15 @@ new Vue({
 
 格式化之后, 代码主要对`tag`为string和非string的情况做对应的处理.
 
-1. string
+**string**
 - 创建DOM元素对应的vnode
 - 内部注册的组件
 
-2. 非string
+**非string**
 - component option即Vue组件的配置对象
 - 组件构造函数(比如来自Vue.extend)
 
-因此vnode除了对应DOM之外, 也可以对应Vue组件, 前者直接来源于`new VNode`, 后者来源`createComponent`
+因此vnode除了对应DOM之外, 也可以对应Vue组件, 前者直接来源于`new VNode`, 后者来源`createComponent`(最后也会调用`new VNode`)
 
 ```js
   if (typeof tag === 'string') {
@@ -222,9 +234,7 @@ new Vue({
   }
 ```
 
-对于string, 先用`config.isReservedTag`判断是否是reserverdTag, 在浏览器端就是判断是否是原生DOM元素. 
-
-说明这个函数是与平台相关的.
+对于string, 先用`config.isReservedTag`判断是否是reserverdTag, 在浏览器端就是判断是否是原生DOM元素对应的tag. 显然这个函数是与平台相关的.
 
 在初始化Vue全局api的时候, 将`Vue.config`和上面的`config`绑定在一起
 
@@ -247,6 +257,8 @@ export function initGlobalAPI (Vue: GlobalAPI) {
 }
 ```
 
+然后在Vue web平台代码的入口文件中(此时`initGlobalAPI`已经执行), 设置成具体平台所对应的函数(平台相关的函数代码在**src/platforms/web/util/index.js**)
+
 **src/platforms/web/runtime/index.js**
 ```js
 // install platform specific utils
@@ -257,8 +269,6 @@ Vue.config.getTagNamespace = getTagNamespace
 Vue.config.isUnknownElement = isUnknownElement
 ```
 
-然后在Vue web平台代码的入口文件中(此时`initGlobalAPI`已经执行), 设置成具体平台所对应的函数(代码在**src/platforms/web/util/index.js**)
-
 若是DOM tag, 则创建对应vnode
 ```js
       vnode = new VNode(
@@ -268,7 +278,6 @@ Vue.config.isUnknownElement = isUnknownElement
 ```
 :::tip
 对于web平台`config.parsePlatformTagName(tag)`返回`tag`
-:::
 
 **VNode constructor**
 ```js
@@ -283,9 +292,11 @@ Vue.config.isUnknownElement = isUnknownElement
     asyncFactory?: Function
   )
 ```
-
+:::
 
 ### createComponent
+创建组件对应的vnode
+
 **src/core/vdom/create-component.js**
 ```js
 export function createComponent (
@@ -373,8 +384,11 @@ export function createComponent (
 }
 ```
 
-```js
 
+首先需要获得组件的构造函数, `Ctor`可能是Vue的配置对象, 也可能是构造函数, 如果是配置对象, 则使用`baseCtor.extend`生成一个构造函数, 即使用`Vue.extend`来生成子组件的构造函数
+`baseCtor`其实就是`new Vue()`中的`Vue`, 相关代码如下
+
+```js
   const baseCtor = context.$options._base
 
   // plain options object: turn it into a constructor
@@ -382,9 +396,6 @@ export function createComponent (
     Ctor = baseCtor.extend(Ctor)
   }
 ```
-
-首先需要获得组件的构造函数, `Ctor`可能是Vue的配置对象, 也可能是构造函数, 如果是配置对象, 则使用`baseCtor.extend`生成一个构造函数, 即使用`Vue.extend`来生成子组件的构造函数
- `baseCtor`其实就是`new Vue()`中的`Vue`, 相关代码如下
 
 **src/core/global-api/index.js**
 ```js
@@ -396,7 +407,7 @@ export function initGlobalAPI (Vue: GlobalAPI) {
 实例化Vue的时候, 会将options merge到vm.$options中, 根组件是在`new Vue(options)`的时候, 子组件是在是[实例化子组件构造函数的时候](https://github.com/vuejs/vue/blob/e90cc60c4718a69e2c919275a999b7370141f3bf/src/core/vdom/create-component.js#L223)
 
 **src/core/instance/init.js**
-```js
+```js{8,11}
 export function initMixin (Vue: Class<Component>) {
   Vue.prototype._init = function (options?: Object) {
         // 子组件
@@ -417,12 +428,12 @@ export function initMixin (Vue: Class<Component>) {
 }
 ```
 
-在得到子组件的构造函数之后, 需要加入一些钩子
+在得到组件的构造函数之后, 需要加入一些钩子
 ```js
   // install component management hooks onto the placeholder node
   installComponentHooks(data)
 ```
-```js
+```js {16}
 const componentVNodeHooks = {
   init (vnode: VNodeWithData, hydrating: boolean): ?boolean {
     if (
@@ -453,7 +464,7 @@ const componentVNodeHooks = {
 }
 ```
 
-为什么需要这些钩子呢? 
+为什么需要这些钩子呢? 比下面的栗子, 
 ```js
 new Vue({
   el: "#app",
@@ -467,11 +478,11 @@ new Vue({
 })
 ```
 
-对于上面的栗子, 我们需要实例化根组件, 同时我们需要在适当的时机, 实例化其子组件, 而这些子组件vnode中的钩子, 可以提供这种能力.(比如init钩子能够挂载子组件)
+我们需要实例化根组件, 同时我们需要在适当的时机, 实例化其子组件, 而这些子组件vnode中的钩子, 可以提供这种能力.(比如init钩子能够挂载子组件)
 
-记得有人说过类似的一句话, 框架中的virtual dom关键点在于其结合了一系列的钩子
+> 记得有人说过类似的一句话, 框架中的virtual dom关键点在于其结合了一系列的钩子
 
-在注入钩子之后, 就创建组件对应的vnode
+在注入钩子之后, 就创建组件对应的vnode, 在componentOption中保存了创建子组件所需要的构造函数, 从父组件接受的propsData, 父组建监听的listener, slot相关的children
 ```js
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
@@ -480,7 +491,7 @@ new Vue({
     asyncFactory
   )
 ```
-
+:::tip
 **VNode constructor**
 ```js
   constructor (
@@ -494,9 +505,11 @@ new Vue({
     asyncFactory?: Function
   )
 ```
+:::
 
 我们可以将组件对应的vnode和DOM元素对应的vnode做个对比.
 ```js
+      // DOM tag
       vnode = new VNode(
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
@@ -505,7 +518,7 @@ new Vue({
 
 可以看出来, 组件vnode的children为undefined, 而componentOptions中有个children(用于slot).
 
-刚接触Vue的时候, 我对这里感到奇怪, 我组件里明明写里很多html模板, 我**错误地以为**组件vnode的children会是组件template里写的那些东西. 尝试去理解Vue的组件设计,  children为undefined恰恰是将整个页面隔离成一个个组件的关键.
+刚接触Vue的时候, 我对这里感到奇怪, 我组件里明明写里很多html模板, 我**错误地以为**组件vnode的children会是组件template里写的那些东西. 尝试去理解Vue的组件设计, children为undefined恰恰是将整个页面隔离成一个个组件的关键.
 
 ## case study 分析个栗子
 
@@ -539,40 +552,7 @@ new Vue({
 3. normalize 创建textVnode
 3. 创建div vnode
 ![render_root](./image/render_root.jpg)
-由于函数的调用顺序, 是先创建children的vnode, 再创建其外层vnode,(可能会受normalize影响) 这里需要注意, 创建Child1 vnode和执行Child1的render()方法是不同的概念. 这也就是Vue组件化的本质, 子组件在父组件中的vnode可以理解为一个占位符placeholder.
 
-Vue patch的过程是以组件为单位的,
+由于函数的调用顺序, 是先创建children的vnode, 再创建其外层vnode(可能会受normalize影响). 这里需要注意, 创建Child1 vnode和执行Child1的render()方法是不同的概念. 这也就是Vue组件化的本质, 子组件在父组件中的vnode可以理解为一个占位符placeholder, 为父子组件建立连接.
 
-```js
-function installComponentHooks (data: VNodeData) {
-  const hooks = data.hook || (data.hook = {})
-  for (let i = 0; i < hooksToMerge.length; i++) {
-    const key = hooksToMerge[i]
-    const existing = hooks[key]
-    const toMerge = componentVNodeHooks[key]
-    if (existing !== toMerge && !(existing && existing._merged)) {
-      hooks[key] = existing ? mergeHook(toMerge, existing) : toMerge
-    }
-  }
-}
-```
-组件vNode在patch过程中需要执行一些钩子
-
-```js
-// inline hooks to be invoked on component VNodes during patch
-const componentVNodeHooks = {
-  init (vnode: VNodeWithData, hydrating: boolean): ?boolean {
-  },
-
-  prepatch (oldVnode: MountedComponentVNode, vnode: MountedComponentVNode) {
-  },
-
-  insert (vnode: MountedComponentVNode) {
-  },
-
-  destroy (vnode: MountedComponentVNode) {
-  }
-}
-
-const hooksToMerge = Object.keys(componentVNodeHooks)
-```
+在父组件render之后, 就会进行其patch过程, 在patch之前, 子组件的render和其相关钩子函数都还没执行.

@@ -4,8 +4,10 @@ module.exports = {
   description: `It's a technology blog focuses on front-end development, but not only that.`,
   plugins: [
     ['@vuepress/medium-zoom', { selector: 'img' }],
-    ['vuepress-plugin-mathjax']
+    ['vuepress-plugin-mathjax'],
+    [require('./plugins/generateFrontmatterDate/index')]
   ],
+  permalink: '/:year/:month/:day/:slug',
   markdown: {
     lineNumbers: true
   },

@@ -1,7 +1,3 @@
----
-date: 2018-10-23
-permalink: /:year-:month-:day-:slug
----
 # node http
 ## 使用node搭建服务器
 ```js

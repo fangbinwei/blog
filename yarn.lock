@@ -888,6 +888,13 @@
   dependencies:
     cross-spawn "^6.0.5"
 
+"@vuepress/plugin-medium-zoom@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.npm.taobao.org/@vuepress/plugin-medium-zoom/download/@vuepress/plugin-medium-zoom-1.1.0.tgz#c95560197fff23500b049278584b85f4f3a0ed3d"
+  integrity sha1-yVVgGX//I1ALBJJ4WEuF9POg7T0=
+  dependencies:
+    medium-zoom "^1.0.4"
+
 "@vuepress/plugin-nprogress@^1.1.0":
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/@vuepress/plugin-nprogress/download/@vuepress/plugin-nprogress-1.1.0.tgz#ca7106adc7016ed0d90a22555066c11da597ef59"
@@ -1268,7 +1275,7 @@ array-flatten@1.1.1:
   resolved "https://registry.npm.taobao.org/array-flatten/download/array-flatten-1.1.1.tgz#9a5f699051b1e7073328f2a008968b64ea2955d2"
   integrity sha1-ml9pkFGx5wczKPKgCJaLZOopVdI=
 
-array-flatten@^2.1.0:
+array-flatten@^2.1.0, array-flatten@^2.1.2:
   version "2.1.2"
   resolved "https://registry.npm.taobao.org/array-flatten/download/array-flatten-2.1.2.tgz#24ef80a28c1a893617e2149b0c6d0d788293b099"
   integrity sha1-JO+AoowaiTYX4hSbDG0NeIKTsJk=
@@ -2196,6 +2203,15 @@ cross-spawn@^6.0.0, cross-spawn@^6.0.5:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
+cross-spawn@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.npm.taobao.org/cross-spawn/download/cross-spawn-7.0.1.tgz#0ab56286e0f7c24e153d04cc2aa027e43a9a5d14"
+  integrity sha1-CrVihuD3wk4VPQTMKqAn5DqaXRQ=
+  dependencies:
+    path-key "^3.1.0"
+    shebang-command "^2.0.0"
+    which "^2.0.1"
+
 crypto-browserify@^3.11.0:
   version "3.12.0"
   resolved "https://registry.npm.taobao.org/crypto-browserify/download/crypto-browserify-3.12.0.tgz#396cf9f3137f03e4b8e532c58f698254e00f80ec"
@@ -2467,6 +2483,13 @@ decode-uri-component@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npm.taobao.org/decode-uri-component/download/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
   integrity sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=
+
+deconstruct-merge@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npm.taobao.org/deconstruct-merge/download/deconstruct-merge-1.1.0.tgz#ed9986ce729d9e67bdbc5780a771a021947ab3d3"
+  integrity sha1-7ZmGznKdnme9vFeAp3GgIZR6s9M=
+  dependencies:
+    array-flatten "^2.1.2"
 
 deep-equal@^1.0.1:
   version "1.1.0"
@@ -2952,6 +2975,11 @@ eslint@^6.5.1:
     table "^5.2.3"
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
+
+esm@^3.0.34:
+  version "3.2.25"
+  resolved "https://registry.npm.taobao.org/esm/download/esm-3.2.25.tgz#342c18c29d56157688ba5ce31f8431fbb795cc10"
+  integrity sha1-NCwYwp1WFXaIulzjH4Qx+7eVzBA=
 
 espree@^6.1.1:
   version "6.1.1"
@@ -4699,6 +4727,13 @@ markdown-it@^8.4.1:
     mdurl "^1.0.1"
     uc.micro "^1.0.5"
 
+mathjax3@3.0.0-beta.3:
+  version "3.0.0-beta.3"
+  resolved "https://registry.npm.taobao.org/mathjax3/download/mathjax3-3.0.0-beta.3.tgz#c3072a59304b4b612aa9516eb672b07000c9a3d5"
+  integrity sha1-wwcqWTBLS2EqqVFutnKwcADJo9U=
+  dependencies:
+    esm "^3.0.34"
+
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.npm.taobao.org/md5.js/download/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"
@@ -4727,6 +4762,11 @@ media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.npm.taobao.org/media-typer/download/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
   integrity sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=
+
+medium-zoom@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.npm.taobao.org/medium-zoom/download/medium-zoom-1.0.4.tgz#b1063093f81151a19989489589edf28e6090630c"
+  integrity sha1-sQYwk/gRUaGZiUiVie3yjmCQYww=
 
 mem@^4.0.0:
   version "4.3.0"
@@ -5524,6 +5564,11 @@ path-key@^2.0.0, path-key@^2.0.1:
   version "2.0.1"
   resolved "https://registry.npm.taobao.org/path-key/download/path-key-2.0.1.tgz#411cadb574c5a140d3a4b1910d40d80cc9f40b40"
   integrity sha1-QRyttXTFoUDTpLGRDUDYDMn0C0A=
+
+path-key@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npm.taobao.org/path-key/download/path-key-3.1.0.tgz#99a10d870a803bdd5ee6f0470e58dfcd2f9a54d3"
+  integrity sha1-maENhwqAO91e5vBHDljfzS+aVNM=
 
 path-parse@^1.0.6:
   version "1.0.6"
@@ -6643,10 +6688,22 @@ shebang-command@^1.2.0:
   dependencies:
     shebang-regex "^1.0.0"
 
+shebang-command@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npm.taobao.org/shebang-command/download/shebang-command-2.0.0.tgz#ccd0af4f8835fbdc265b82461aaf0c36663f34ea"
+  integrity sha1-zNCvT4g1+9wmW4JGGq8MNmY/NOo=
+  dependencies:
+    shebang-regex "^3.0.0"
+
 shebang-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/shebang-regex/download/shebang-regex-1.0.0.tgz#da42f49740c0b42db2ca9728571cb190c98efea3"
   integrity sha1-2kL0l0DAtC2yypcoVxyxkMmO/qM=
+
+shebang-regex@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npm.taobao.org/shebang-regex/download/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
+  integrity sha1-rhbxZE2HPsrYQ7AwexQzYtTEIXI=
 
 shelljs@^0.8.3:
   version "0.8.3"
@@ -7613,12 +7670,28 @@ vuepress-html-webpack-plugin@^3.2.0:
     toposort "^1.0.0"
     util.promisify "1.0.0"
 
+vuepress-mergeable@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npm.taobao.org/vuepress-mergeable/download/vuepress-mergeable-1.0.2.tgz#505078814faa4cfdf2185cc79c7462a12c3c9919"
+  integrity sha1-UFB4gU+qTP3yGFzHnHRioSw8mRk=
+  dependencies:
+    deconstruct-merge "^1.1.0"
+
 vuepress-plugin-container@^2.0.0:
   version "2.0.2"
   resolved "https://registry.npm.taobao.org/vuepress-plugin-container/download/vuepress-plugin-container-2.0.2.tgz#3489cc732c7a210b31f202556e1346125dffeb73"
   integrity sha1-NInMcyx6IQsx8gJVbhNGEl3/63M=
   dependencies:
     markdown-it-container "^2.0.0"
+
+vuepress-plugin-mathjax@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.npm.taobao.org/vuepress-plugin-mathjax/download/vuepress-plugin-mathjax-1.2.8.tgz#decec38e9dbb82de9cf79f042463fa4a56e25340"
+  integrity sha1-3s7Djp27gt6c958EJGP6SlbiU0A=
+  dependencies:
+    lru-cache "^5.1.1"
+    mathjax3 "3.0.0-beta.3"
+    vuepress-mergeable "^1.0.2"
 
 vuepress@^1.0.3:
   version "1.1.0"
@@ -7799,6 +7872,13 @@ which@^1.2.9:
   version "1.3.1"
   resolved "https://registry.npm.taobao.org/which/download/which-1.3.1.tgz#a45043d54f5805316da8d62f9f50918d3da70b0a"
   integrity sha1-pFBD1U9YBTFtqNYvn1CRjT2nCwo=
+  dependencies:
+    isexe "^2.0.0"
+
+which@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npm.taobao.org/which/download/which-2.0.1.tgz?cache=0&sync_timestamp=1570145370228&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fwhich%2Fdownload%2Fwhich-2.0.1.tgz#f1cf94d07a8e571b6ff006aeb91d0300c47ef0a4"
+  integrity sha1-8c+U0HqOVxtv8AauuR0DAMR+8KQ=
   dependencies:
     isexe "^2.0.0"
 

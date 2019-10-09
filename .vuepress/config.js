@@ -7,7 +7,7 @@ module.exports = {
     ['vuepress-plugin-mathjax'],
     [require('./plugins/generateFrontmatterDate/index')]
   ],
-  permalink: '/:year/:month/:day/:slug',
+  permalink: '/:year-:month-:day-:slug',
   markdown: {
     lineNumbers: true
   },

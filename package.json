@@ -34,6 +34,7 @@
     "shelljs": "^0.8.3"
   },
   "dependencies": {
+    "javascript-stringify": "^2.0.0",
     "vuepress": "^1.0.3",
     "vuepress-plugin-mathjax": "^1.2.8"
   },

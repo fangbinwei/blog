@@ -1,25 +1,31 @@
 const glob = require('glob')
+const Config = require('vuepress-chain')
+const config = new Config()
+const path = require('path')
+const { getGitAddedTimeStamp } = require('./util/git')
+
 const {
   ensurePrefixSlash,
-  ensureSuffixSlash,
   ensureArrayItem,
   ensureObjectProp
 } = require('./util')
 
 module.exports = (options, ctx) => {
-  let docsDir = options.docsDir || './'
+  let docsDir = path.relative(process.cwd(), ctx.sourceDir)
   // remove prefix ./, ensure suffix /
-  docsDir = ensureSuffixSlash(docsDir.replace(/^\.\//, ''))
+  // docsDir = ensureSuffixSlash(docsDir.replace(/^\.\//, ''))
   let ignore = options.ignore || []
   if (!Array.isArray(ignore)) ignore = [ignore]
   ignore = ['node_modules/**'].concat(ignore)
 
-  const globPattern = docsDir === './' ? '**/**.md' : `${docsDir}**/**.md`
+  const globPattern = docsDir === '' ? `**/**.md` : `${docsDir}/**/**.md`
 
   const files = glob.sync(globPattern, {
     ignore
   })
-  let { nav, sidebar } = generate(files)
+  generate(files)
+  const { nav, sidebar } = config.toConfig()
+  sortSidebar(sidebar, ctx.sourceDir)
 
   let {
     nav: defaultNavs = [],
@@ -48,77 +54,49 @@ module.exports = (options, ctx) => {
     }
   }
 }
-
-function setNav(structure, link, nav = []) {
-  const [navGroup, navSubGroup, articleGroup] = structure
-  const articleGroupItem = {
-    text: articleGroup,
-    link: ensurePrefixSlash(link)
-  }
-  const navItem = {
-    text: navGroup,
-    items: [
-      {
-        text: navSubGroup,
-        items: [articleGroupItem]
-      }
-    ]
-  }
-  const _navGroup = ensureArrayItem(
-    nav,
-    item => item.text === navGroup,
-    navItem
-  )
-  if (!_navGroup) return
-
-  const _navSubGroup = ensureArrayItem(
-    _navGroup.items,
-    item => item.text === navSubGroup,
-    navItem.items[0]
-  )
-  if (!_navSubGroup) return
-
-  ensureArrayItem(
-    _navSubGroup.items,
-    item => item.text === articleGroup,
-    articleGroupItem
-  )
-
-  return nav
+function sortSidebar(sidebar, context) {
+  Object.keys(sidebar).forEach(baseLink => {
+    sidebar[baseLink].sort(function(item1, item2) {
+      const path1 = path.join(context, baseLink, item1.title)
+      const path2 = path.join(context, baseLink, item2.title)
+      return getGitAddedTimeStamp(path1) - getGitAddedTimeStamp(path2)
+    })
+    sidebar[baseLink].forEach(group => {
+      group.children.sort(function(item1, item2) {
+        const path1 = path.join(context, baseLink, item1)
+        const path2 = path.join(context, baseLink, item2)
+        return getGitAddedTimeStamp(path1) - getGitAddedTimeStamp(path2)
+      })
+    })
+  })
 }
 
-function setSidebar(structure, sidebar = {}) {
+function setNav(structure, link) {
+  const [navGroup, navSubGroup, articleGroup] = structure
+  config
+    .nav(navGroup)
+    .text(navGroup)
+    .group(navSubGroup)
+    .text(navSubGroup)
+    .item(articleGroup)
+    .text(articleGroup)
+    .link(ensurePrefixSlash(link))
+}
+
+function setSidebar(structure) {
   const [navGroup, navSubGroup, articleGroup, article] = structure
   const sidebarProp = `/${navGroup}/${navSubGroup}/`
   const articleLink = [articleGroup, article].join('/')
-  const sidebarGroup = {
-    title: articleGroup,
-    sidebarDepth: 0,
-    collapsable: false,
-    children: [articleLink]
-  }
-  const _sidebarForMatchedPath = ensureObjectProp(sidebar, sidebarProp, [
-    sidebarGroup
-  ])
-  if (!_sidebarForMatchedPath) return
-  const _sidebarGroup = ensureArrayItem(
-    _sidebarForMatchedPath,
-    groupItem => groupItem.title === articleGroup,
-    sidebarGroup
-  )
-  if (!_sidebarGroup) return
-  ensureArrayItem(
-    _sidebarGroup.children,
-    link => link === articleLink,
-    articleLink
-  )
+  config
+    .sidebar(sidebarProp)
+    .group(articleGroup)
+    .title(articleGroup)
+    .sidebarDepth(0)
+    .collapsable(false)
+    .children.add(articleLink)
 }
 
 function generate(files) {
-  // let structureObj = {}
-  let nav = []
-  let sidebar = {}
-
   let filterFiles = files.filter(link => {
     let structure = link.split('/')
     const validDirStructure = structure.length >= 4
@@ -128,22 +106,13 @@ function generate(files) {
     // const [navGroup, navSubGroup, articleGroup, article] = structure
 
     if (validDirStructure) {
-      setNav(structure, link, nav)
-      setSidebar(structure, sidebar)
-      // structureObj[navGroup] = structureObj[navGroup] || {}
-      // structureObj[navGroup][navSubGroup] =
-      //   structureObj[navGroup][navSubGroup] || {}
-      // structureObj[navGroup][navSubGroup][articleGroup] =
-      //   structureObj[navGroup][navSubGroup][articleGroup] || {}
-      // structureObj[navGroup][navSubGroup][articleGroup][article] = item
+      setNav(structure, link)
+      setSidebar(structure)
     }
 
     return validDirStructure
   })
   return {
-    files: filterFiles,
-    nav,
-    sidebar
-    // structure
+    files: filterFiles
   }
 }

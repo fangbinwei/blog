@@ -5,18 +5,28 @@ module.exports = {
   plugins: [
     ['@vuepress/medium-zoom', { selector: 'img' }],
     ['vuepress-plugin-mathjax'],
-    [require('./plugins/generateFrontmatterDate/index')]
+    // [require('./plugins/generateFrontmatterDate/index')],
+    [
+      require('./plugins/autoNavSidebar/index'),
+      { ignore: [], transform: config => config }
+    ]
   ],
-  permalink: '/:year-:month-:day-:slug',
+  // permalink: '/:year-:month-:day-:slug',
   markdown: {
     lineNumbers: true
   },
   themeConfig: {
     repo: 'fangbinwei/blog',
     editLinks: true,
-    smoothScroll: true,
-    nav: require('./config/nav.js'),
-    sidebar: require('./config/sidebar'),
+    smoothScroll: false,
+    nav: [
+      {
+        text: '近期',
+        link: '/guide/'
+      }
+    ],
+    // nav: require('./config/nav'),
+    // sidebar: require('./config/sidebar'),
     lastUpdated: 'Last Updated'
   }
 }

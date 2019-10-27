@@ -31,10 +31,10 @@
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "prettier": "^1.18.2",
-    "shelljs": "^0.8.3"
+    "shelljs": "^0.8.3",
+    "vuepress-chain": "^0.0.1"
   },
   "dependencies": {
-    "javascript-stringify": "^2.0.0",
     "vuepress": "^1.0.3",
     "vuepress-plugin-mathjax": "^1.2.8"
   },

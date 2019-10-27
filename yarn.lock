@@ -7765,6 +7765,13 @@ vue@^2.6.10:
   resolved "https://registry.npm.taobao.org/vue/download/vue-2.6.10.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue%2Fdownload%2Fvue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
   integrity sha1-pysaQqTYKnIepDjRtr9V5mGVxjc=
 
+vuepress-chain@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.npm.taobao.org/vuepress-chain/download/vuepress-chain-0.0.1.tgz?cache=0&sync_timestamp=1572181459974&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvuepress-chain%2Fdownload%2Fvuepress-chain-0.0.1.tgz#afd118e6e5708cb039dde1ec44d8bee60dd8a72a"
+  integrity sha1-r9EY5uVwjLA53eHsRNi+5g3Ypyo=
+  dependencies:
+    javascript-stringify "^2.0.0"
+
 vuepress-html-webpack-plugin@^3.2.0:
   version "3.2.0"
   resolved "https://registry.npm.taobao.org/vuepress-html-webpack-plugin/download/vuepress-html-webpack-plugin-3.2.0.tgz#219be272ad510faa8750d2d4e70fd028bfd1c16e"

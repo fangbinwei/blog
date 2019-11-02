@@ -8,7 +8,12 @@ module.exports = {
     // [require('./plugins/generateFrontmatterDate/index')],
     [
       require('./plugins/autoNavSidebar/index'),
-      { ignore: [], transform: config => config }
+      {
+        ignore: [],
+        transform: config => config,
+        sidebarDepth: 2,
+        collapsable: false
+      }
     ]
   ],
   // permalink: '/:year-:month-:day-:slug',

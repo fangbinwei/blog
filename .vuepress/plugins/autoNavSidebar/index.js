@@ -23,7 +23,7 @@ module.exports = (options, ctx) => {
   const files = glob.sync(globPattern, {
     ignore
   })
-  generate(files)
+  generate(files, options)
   const { nav, sidebar } = config.toConfig()
   sortSidebar(sidebar, ctx.sourceDir)
 
@@ -83,7 +83,7 @@ function setNav(structure, link) {
     .link(ensurePrefixSlash(link))
 }
 
-function setSidebar(structure) {
+function setSidebar(structure, options) {
   const [navGroup, navSubGroup, articleGroup, article] = structure
   const sidebarProp = `/${navGroup}/${navSubGroup}/`
   const articleLink = [articleGroup, article].join('/')
@@ -91,12 +91,12 @@ function setSidebar(structure) {
     .sidebar(sidebarProp)
     .group(articleGroup)
     .title(articleGroup)
-    .sidebarDepth(0)
-    .collapsable(false)
+    .sidebarDepth(options.sidebarDepth || 0)
+    .collapsable(options.collapsable || false)
     .children.add(articleLink)
 }
 
-function generate(files) {
+function generate(files, options) {
   let filterFiles = files.filter(link => {
     let structure = link.split('/')
     const validDirStructure = structure.length >= 4
@@ -107,7 +107,7 @@ function generate(files) {
 
     if (validDirStructure) {
       setNav(structure, link)
-      setSidebar(structure)
+      setSidebar(structure, options)
     }
 
     return validDirStructure

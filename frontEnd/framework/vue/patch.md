@@ -204,6 +204,10 @@ patch除了包括vNode更新时用到的相关对比算法以外, 还有另外�
   - 传入了el参数, 此时`oldVnode`为真实的DOM元素
   - 状态更新触发视图更新时, 且不满足sameVnode, 且`oldVnode`不为真实的DOM元素
 
+:::tip
+`!isRealElement && sameVnode(oldVnode, vnode)`这个判断有点疑问, 我觉得当满足sameVnode的时候, 能够保证`!isRealElement`为`true`, 而[vue以前的代码](https://github.com/vuejs/vue/commit/3245ee6fe4588719483b909993e737682fa3cb3d)确实只有`sameVnode`这一个判断条件, 可能是为了某种我暂时没有想到的边界条件
+:::
+
 ### vnode创建时
 
 ```js

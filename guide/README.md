@@ -7,7 +7,7 @@ listHidden: true
     <div class="year" v-if="Number(item.year)!==thisYear">📆{{item.year}}</div>
     <div class="post" v-for="post in item.posts">
       <div class="post-title">
-        <a :href="post.path">{{post.title}}</a>
+        <router-link :to="post.path">{{post.title}}</router-link>
       </div>
       <div class="post-date">
         {{dateFormatter(post.frontmatter.date)}} 

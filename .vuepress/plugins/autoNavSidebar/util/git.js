@@ -32,8 +32,8 @@ function getGitAddedTimeStamp(filePath) {
     debug('earliest', earliest)
   } catch (e) {
     debug('catch', e)
-    return Number.MAX_SAFE_INTEGER
+    return Date.now()
   }
-  return earliest === '' ? Number.MAX_SAFE_INTEGER : Number(earliest)
+  return earliest === '' ? Date.now() : Number(earliest) * 1000
 }
 module.exports = { getGitAddedTimeStamp }

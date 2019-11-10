@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "docs:dev": "vuepress dev .",
+    "docs:dev": "cross-env DEBUG=myPlugin-* vuepress dev .",
     "docs:build": "vuepress build ."
   },
   "repository": {
@@ -20,6 +20,7 @@
   "homepage": "https://github.com/fangbinwei/Thinking#readme",
   "devDependencies": {
     "@vuepress/plugin-medium-zoom": "^1.1.0",
+    "cross-env": "^6.0.3",
     "cross-spawn": "^7.0.1",
     "cz-customizable": "^5.3.0",
     "eslint": "^6.5.1",
@@ -35,6 +36,7 @@
     "vuepress-chain": "^0.0.1"
   },
   "dependencies": {
+    "debug": "^4.1.1",
     "vuepress": "^1.0.3",
     "vuepress-plugin-mathjax": "^1.2.8"
   },

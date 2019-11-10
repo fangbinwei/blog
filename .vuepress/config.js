@@ -5,14 +5,14 @@ module.exports = {
   plugins: [
     ['@vuepress/medium-zoom', { selector: 'img' }],
     ['vuepress-plugin-mathjax'],
-    // [require('./plugins/generateFrontmatterDate/index')],
+    [require('./plugins/generateFrontmatterDate/index')],
     [
       require('./plugins/autoNavSidebar/index'),
       {
         ignore: [],
         transform: config => config,
         sidebarDepth: 2,
-        collapsable: false
+        collapsable: true
       }
     ]
   ],
@@ -26,7 +26,7 @@ module.exports = {
     smoothScroll: false,
     nav: [
       {
-        text: '近期',
+        text: 'Archive',
         link: '/guide/'
       }
     ],

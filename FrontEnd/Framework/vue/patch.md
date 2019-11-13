@@ -229,6 +229,24 @@ patch除了包括vNode更新时用到的相关对比算法以外, 还有另外�
 - 实例化Vue不指定`el`参数, 调用`$mount()`来挂载(empty mount)
 - 创建子组件时(也是通过调用`$mount()`)
 
+:::tip
+```js
+var MyComponent = Vue.extend({
+  template: '<div>Hello!</div>'
+})
+
+// create and mount to #app (will replace #app)
+new MyComponent().$mount('#app')
+
+// the above is the same as:
+new MyComponent({ el: '#app' })
+
+// or, render off-document and append afterwards:
+var component = new MyComponent().$mount()
+document.getElementById('app').appendChild(component.$el)
+```
+:::
+
 ### vnode更新时
 ```js
  const isRealElement = isDef(oldVnode.nodeType)
@@ -451,7 +469,11 @@ if (isDef(vnode.parent)) {
 ```
 之后就需要, 将body中的**原来的`#app`删除掉**
 
+#### 疑问
 暂时没有想到会调用`isDef(oldVnode.tag)`分支的场景, 可以研究这个[commit](https://github.com/vuejs/vue/commit/99a96d3c37d70c0fad842f45bcdf9147c10350aa#diff-c440e9dbcd3063ff09ef838fbf786a1eR144)
+
+**更新**: 
+[想到了执行上面代码的场景](#更新)
 
 ```js
     invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
@@ -530,7 +552,7 @@ patch函数最后还执行了`invokeInsertHook`, 就像`invokeDestroyHook`一样
       return
     }
 ```
-如果vnode对应着组件, 则`createComponent`则返回`true`, 直接`return`, 我们的case不涉及子组件, 所以可以忽略j
+如果vnode对应着组件, 则`createComponent`则返回`true`, 直接`return`, 我们的case不涉及子组件, 所以可以忽略
 
 ```js
   vnode.elm = vnode.ns
@@ -567,7 +589,43 @@ DOM元素对应的vnode, 则创建对应DOM元素, 并设置style scope
     }
   }
 ```
-接着创建div的子元素, 遍历`children`调用`createElm`, 并传入`parentElm`(`vnode.elm` class为`test`的div元素), 可见这是一个深度优先遍历的过程. 除此之外, `refElm`传`null` (因为需要要参考的元素, 直接appendChild往父元素中添加子元素就可以), 传入了`ownerArray`, `index`(作用暂且不讨论 TODO:)
+接着创建div的子元素, 遍历`children`调用`createElm`, 并传入`parentElm`(`vnode.elm` class为`test`的div元素), 可见这是一个深度优先遍历的过程. 除此之外, `refElm`传`null` (因为不需要参考的元素, 直接appendChild往父元素中添加子元素就可以), 传入了`ownerArray`, `index`(作用暂且不讨论 TODO:)
 
 ### chart
 ![patch](./image/patch/patch.svg)
+
+
+## 更新
+之前一处[疑问](#疑问)
+
+```js
+var a = new Vue({
+  data () {
+    return {
+      test: true
+    }
+  },
+  render (h) {
+    if (this.test) {
+    return h('div',{class: 'test'}, 'test')
+    } else {
+      return h('a', {}, 'a')
+    }
+  }
+})
+a.$mount()
+setTimeout(() => {
+  a.test = false
+}, 10000)
+```
+
+在上面的场景中, 当timeout中的逻辑执行时, 会销毁old vnode, 
+```js
+  // destroy old node
+  if (isDef(parentElm)) {
+    removeVnodes(parentElm, [oldVnode], 0, 0)
+  } else if (isDef(oldVnode.tag)) {
+    invokeDestroyHook(oldVnode)
+  }
+```
+由于我们的Vue实例并没有关联到DOM中, 这样我们不需要从DOM中删除该vnode 对应的元素, 并执行一些destroy相关的hook. 我们仅仅需要执行destroy相关的hook, 比如, 如果我们使用了ref属性, 那么destroy的时候, 我们需要将其在`vm.$refs`中剔除, 置为`undefined`

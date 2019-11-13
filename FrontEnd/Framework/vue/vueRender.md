@@ -464,7 +464,7 @@ const componentVNodeHooks = {
 }
 ```
 
-为什么需要这些钩子呢? 比下面的栗子, 
+为什么需要这些钩子呢? 比如下面的栗子, 
 ```js
 new Vue({
   el: "#app",

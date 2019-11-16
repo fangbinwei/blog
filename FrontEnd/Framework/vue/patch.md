@@ -16,7 +16,26 @@ new Vue({
   }
 })).$mount()
 ```
-挂载流程中, 需要先通过`render`得到组件的virtual DOM, 然后将其patch到DOM中.
+挂载流程中, 需要先通过`render`得到组件的virtual DOM, 然后将其patch到DOM中. 所谓的patch到DOM中就是根据vNode tree生成DOM元素`vm.$el`, 并将其插入到DOM中.
+
+:::tip
+上面第二个例子没有指定挂载的DOM的节点, 因此不会挂载到DOM中, 需要手动挂载.
+```js
+var MyComponent = Vue.extend({
+  template: '<div>Hello!</div>'
+})
+
+// 创建并挂载到 #app (会替换 #app)
+new MyComponent().$mount('#app')
+
+// 同上
+new MyComponent({ el: '#app' })
+
+// 或者，在文档之外渲染并且随后挂载
+var component = new MyComponent().$mount()
+document.getElementById('app').appendChild(component.$el)
+```
+:::
 
 **src/platforms/web/runtime/index.js**
 ```js
@@ -133,6 +152,8 @@ export const patch: Function = createPatchFunction({ nodeOps, modules })
 我们可以给custom directive提供相关钩子函数, 这些钩子函数就是在patch的过程中通过`baseModules`来调用的
 :::
 
+TODO: modules
+
 ## patch
 
 **core/vdom/patch.js**
@@ -220,6 +241,8 @@ patch除了包括vNode更新时用到的相关对比算法以外, 还有另外�
       isInitialPatch = true
       createElm(vnode, insertedVnodeQueue)
     } else {
+      //...
+    }
 
     invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
     return vnode.elm
@@ -573,7 +596,7 @@ DOM元素对应的vnode, 则创建对应DOM元素, 并设置style scope
   }
 ```
 
-这里所创建的DOM元素即为class为`test`的div元素
+这里所创建的DOM元素为div元素
 
 ```js
   function createChildren (vnode, children, insertedVnodeQueue) {
@@ -590,6 +613,32 @@ DOM元素对应的vnode, 则创建对应DOM元素, 并设置style scope
   }
 ```
 接着创建div的子元素, 遍历`children`调用`createElm`, 并传入`parentElm`(`vnode.elm` class为`test`的div元素), 可见这是一个深度优先遍历的过程. 除此之外, `refElm`传`null` (因为不需要参考的元素, 直接appendChild往父元素中添加子元素就可以), 传入了`ownerArray`, `index`(作用暂且不讨论 TODO:)
+
+
+```js
+      if (isDef(data)) {
+        invokeCreateHooks(vnode, insertedVnodeQueue)
+      }
+      insert(parentElm, vnode.elm, refElm)
+```
+在创建子元素之后, 会调用`invokeCreateHooks`, `insert`, 显然`insert`的作用是将生成的DOM元素插入到DOM中
+
+```js
+  function invokeCreateHooks (vnode, insertedVnodeQueue) {
+    for (let i = 0; i < cbs.create.length; ++i) {
+      cbs.create[i](emptyNode, vnode)
+    }
+    i = vnode.data.hook // Reuse variable
+    if (isDef(i)) {
+      if (isDef(i.create)) i.create(emptyNode, vnode)
+      if (isDef(i.insert)) insertedVnodeQueue.push(vnode)
+    }
+  }
+```
+
+`invokeCreateHook`的一个作用是触发vnode的create钩子, 我们的例子中, 所创建的div元素的class为`test`, 给DOM元素添加class的这个操作就是在create钩子中调用的
+
+> platformModules中封装了对DOM中style, class, events等相关的操作. 可以在patch的过程中调用
 
 ### chart
 ![patch](./image/patch/patch.svg)

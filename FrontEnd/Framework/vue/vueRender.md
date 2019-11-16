@@ -10,7 +10,7 @@ Vue内部使用vm._render()来生成vnode, 下面是是部分关键代码
 > [网上都说操作真实 DOM 慢，但测试结果却比 React 更快，为什么？ - 尤雨溪的回答 - 知乎](https://www.zhihu.com/question/31809713/answer/53544875)
 
 **src/core/instance/render.js**
-```js
+```js{29}
 export function initRender (vm: Component) {
   vm._c = (a, b, c, d) => createElement(vm, a, b, c, d, false)
   // user-written render functions.
@@ -65,6 +65,8 @@ export function renderMixin (Vue: Class<Component>) {
 :::tip
 `vm.$createElement`也就是常说的h函数
 :::
+
+TODO:render_Proxy
 
 `render`有两个来源
 - 用户写的render函数

@@ -640,6 +640,14 @@ DOM元素对应的vnode, 则创建对应DOM元素, 并设置style scope
 
 > platformModules中封装了对DOM中style, class, events等相关的操作. 可以在patch的过程中调用
 
+`insertedVnodeQueue`与组件化相关, 暂不提
+
+最后patch函数返回vnode.elm, 并赋值给vm.$el
+
+```js
+vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
+```
+
 ### chart
 ![patch](./image/patch/patch.svg)
 

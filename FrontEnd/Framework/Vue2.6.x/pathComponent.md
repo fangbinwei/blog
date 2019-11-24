@@ -78,9 +78,9 @@ new Vue({
 })
 ```
 
-这里我们定义了`components`属性, 或者也可以使用`Vue.component`, 因为我们在render函数中通过传递tag `button-count`指代组件, Vue在render的时候会在`vm.$options.components`(包括原型链`vm.$options.__proto__.components`)中去寻找组件(可以参考[render部分](/FrontEnd/Framework/vue/vueRender.html#createelement-2)). 而定义`components`, 或使用`Vue.component`,本质上是在往`vm.$options.components`中去注入组件. 因此在`.vue`文件中使用`template`的时候, 我们通常需要使用`components`属性来注册下组件.
+这里我们定义了`components`属性, 或者也可以使用`Vue.component`, 因为我们在render函数中通过传递tag `button-count`指代组件, Vue在render的时候会在`vm.$options.components`(包括原型链`vm.$options.__proto__.components`)中去寻找组件(可以参考[render部分](/FrontEnd/Framework/vue2.6.x/vueRender.html#createelement-2)). 而定义`components`, 或使用`Vue.component`,本质上是在往`vm.$options.components`中去注入组件. 因此在`.vue`文件中使用`template`的时候, 我们通常需要使用`components`属性来注册下组件.
 
-当然也可以不需要手动注册组件, 直接利用作用域, 但是这种方式只能用在render函数中
+当然也可以不需要手动注册组件, 直接利用作用域, 但是这种方式只能配合render函数使用
 
 ```js
 const ButtonCount = {
@@ -105,7 +105,7 @@ new Vue({
 ```
 
 ## 组件化之后, 什么发生了变化?
-我们拿上面的例子来说, 组件化之后, 首当其冲, render函数得到的vNode tree变了. 如果没有组件化, 我们只需要创建DOM元素对应的vNode, 组件化之后, 我们就需要创建组件对应的vNode, 参考[render章节](/FrontEnd/Framework/vue/vueRender.html#createcomponent)
+我们拿上面的例子来说, 组件化之后, 首当其冲, render函数得到的vNode tree变了. 如果没有组件化, 我们只需要创建DOM元素对应的vNode, 组件化之后, 我们就需要创建组件对应的vNode, 参考[render章节](/FrontEnd/Framework/vue2.6.x/vueRender.html#createcomponent)
 
 ## 组件化与patch
 没有组件化的时候, 我们patch的过程会创建所有DOM元素, 并将vm.$el插入到DOM中. 组件化之后, 何时去创建组件对应的DOM元素呢? 
@@ -215,7 +215,7 @@ new Vue({
   }
 }
 ```
-上面的代码在[patch章节](/FrontEnd/Framework/vue/patch.html#case-study-传入el参数的情况)分析过
+上面的代码在[patch章节](/FrontEnd/Framework/vue2.6.x/patch.html#case-study-传入el参数的情况)分析过
 
 关键代码在`createElm`, 根据vnode创建DOM元素
 
@@ -336,6 +336,8 @@ new Vue({
   }
 ```
 
+createChildren中调用createElm时, refElm传递的总是null
+
 ### createComponent
 在我们的例子中, `Child1`是组件vnode, `createElm`中会执行`createComponent`, 并返回`true`
 
@@ -362,7 +364,7 @@ new Vue({
     }
   }
 ```
-要判断一个组件是否是组件vnode, 关键判断其是否有`vnode.componentInstance`, 创建组件的vnode时, 会为其[注入hooks](/FrontEnd/Framework/vue/vueRender.html#createcomponent), 这其中就有`init`, `vnode.componentInstance`就是和`init` hook 相关. 
+要判断一个组件是否是组件vnode, 关键判断其是否有`vnode.componentInstance`, 创建组件的vnode时, 会为其[注入hooks](/FrontEnd/Framework/vue2.6.x/vueRender.html#createcomponent), 这其中就有`init`, `vnode.componentInstance`就是和`init` hook 相关. 
 
 ### init hook
 
@@ -827,9 +829,9 @@ initComponent(vnode, insertedVnodeQueue)
 
  `initComponent`另一个很重要的作用, 是将子组件patch得到的`vm.$el`赋值给`vnode.elm`(vnode是子组件在父组件中的placeholder). 这样, placeholder vnode也拿到了子组件vnode tree对应的DOM元素.
 
-TODO: pendingInsert, setScope
+TODO: setScope
 
-我们的例子中, 会执行`invokeCreateHooks`, 其作用在[patch章节](/FrontEnd/Framework/vue/patch.html#createelm)有提及. 我们的例子中, 往根组件注入`$refs.child1`就是在其中执行.
+我们的例子中, 会执行`invokeCreateHooks`, 其作用在[patch章节](/FrontEnd/Framework/vue2.6.x/patch.html#createelm)有提及. 我们的例子中, 往根组件注入`$refs.child1`就是在其中执行.
 
 ```js
 new Vue({
@@ -939,8 +941,6 @@ function invokeInsertHook (vnode, queue, initial) {
 
 对于根组件(指定了`el`属性)来说, 其`isInitialPatch`为`false`, 子组件其`isInitialPatch`为`true`
 
-TODO: 子组件invokeInsertHook的逻辑
-
 因此根组件的`invokeInsertHook`主要是执行`insertedVnodeQueue`中vnode的insert hook
 
 例子中, 是执行Child1的insert hook
@@ -1022,6 +1022,179 @@ export function mountComponent (
 [之前有说明](#child-mount), 只有根组件的`vm.$vnode`为`undefined`
 
 ### chart
+
+#### patch flowchart
+![componentRender](./image/patchComponent/patchComponent.svg)
+
+#### vnode,vm relation
+![componentRenderRelation](./image/patchComponent/patchComponentRelation.svg)
+
+
+### insertedVnodeQueue
+```js{5}
+  function invokeInsertHook (vnode, queue, initial) {
+    // delay insert hooks for component root nodes, invoke them after the
+    // element is really inserted
+    if (isTrue(initial) && isDef(vnode.parent)) {
+      vnode.parent.data.pendingInsert = queue
+    } else {
+      for (let i = 0; i < queue.length; ++i) {
+        queue[i].data.hook.insert(queue[i])
+      }
+    }
+  }
+```
+
+```js
+  return function patch (oldVnode, vnode, hydrating, removeOnly) {
+    invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
+    return vnode.elm
+  }
+```
+
+前提1: 子组件在patch逻辑的最后, 会通过`invokeInsertHook`将`insertedVnodeQueue`赋值给其placeholder node(`data.pendingInsert`),
+
+前提2: 根组件会在patch逻辑的最后, 通过`invokeInsertHook`, 调用`insertedVnodeQueue`中vnode的insert hook
+
+用分治归并的思想来理解, 根组件的`insertedVnodeQueue`来源于嵌套的子组件的`insertedVnodeQueue`,  其嵌套子组件的`insertedVnodeQueue`来源于其嵌套子组件的`insertedVnodeQueue`, 递归的终点是一个不嵌套子组件的组件, 其`insertedVnodeQueue`为空数组. 结合[下面例子的图](#insertedvnodequeue-chart)来理解这个过程
+
+递归式:
+
+1. (当组件不嵌套组件) `insertedVnodeQueue`是空数组 
+
+2. (当组件嵌套组件) `insertedVnodeQueue`为非空数组, 数组中的vnode来源有两个地方, 来源1是嵌套组件的placeholder node的`data.pendingInsert`(前提1), 来源2是placeholder node本身
+
+
+递归式2的来源1:
+```js{3}
+  function initComponent (vnode, insertedVnodeQueue) {
+    if (isDef(vnode.data.pendingInsert)) {
+      insertedVnodeQueue.push.apply(insertedVnodeQueue, vnode.data.pendingInsert)
+      vnode.data.pendingInsert = null
+    }
+    vnode.elm = vnode.componentInstance.$el
+    if (isPatchable(vnode)) {
+      invokeCreateHooks(vnode, insertedVnodeQueue)
+      setScope(vnode)
+    } else {
+      // empty component root.
+      // skip all element-related modules except for ref (#3455)
+      registerRef(vnode)
+      // make sure to invoke the insert hook
+      insertedVnodeQueue.push(vnode)
+    }
+  }
+```
+
+递归式2的来源2:
+
+```js{8,24}
+  function initComponent (vnode, insertedVnodeQueue) {
+    if (isDef(vnode.data.pendingInsert)) {
+      insertedVnodeQueue.push.apply(insertedVnodeQueue, vnode.data.pendingInsert)
+      vnode.data.pendingInsert = null
+    }
+    vnode.elm = vnode.componentInstance.$el
+    if (isPatchable(vnode)) {
+      invokeCreateHooks(vnode, insertedVnodeQueue)
+      setScope(vnode)
+    } else {
+      // empty component root.
+      // skip all element-related modules except for ref (#3455)
+      registerRef(vnode)
+      // make sure to invoke the insert hook
+      insertedVnodeQueue.push(vnode)
+    }
+  }
+  function invokeCreateHooks (vnode, insertedVnodeQueue) {
+    for (let i = 0; i < cbs.create.length; ++i) {
+      cbs.create[i](emptyNode, vnode) }
+    i = vnode.data.hook // Reuse variable
+    if (isDef(i)) {
+      if (isDef(i.create)) i.create(emptyNode, vnode)
+      if (isDef(i.insert)) insertedVnodeQueue.push(vnode)
+    }
+  }
+```
+
+
+根组件执行所收集的组件vnode的insert hook
+```js
+const componentVNodeHooks = {
+  insert (vnode: MountedComponentVNode) {
+    const { context, componentInstance } = vnode
+    if (!componentInstance._isMounted) {
+      componentInstance._isMounted = true
+      callHook(componentInstance, 'mounted')
+    }
+    if (vnode.data.keepAlive) {
+      //...
+    }
+  },
+}
+```
+
+最后根组件执行自己的mounted hook
+
+看下面的例子
+
+```js
+const Child1_1 = {
+  name: 'Child1',
+  render(h) {
+    return h('div', null, '--child1_1')
+  },
+  mounted() {
+    console.log('mounted child1_1')
+  }
+}
+const Child1_2 = {
+  name: 'Child1',
+  render(h) {
+    return h('div', null, '--child1_2')
+  },
+  mounted() {
+    console.log('mounted child1_2')
+  }
+}
+
+const Child1 = {
+  name: 'Child2',
+  render(h) {
+    return h('div', null, ['-child1', h(Child1_1), h(Child1_2)])
+  },
+  mounted() {
+    console.log('mounted child1')
+  }
+}
+
+new Vue({
+  el: "#app",
+  render (h) {
+      return h('div',{class: 'root'}, [
+        'root',
+        h(Child1)
+      ])
+  },
+  mounted () {
+    console.log('root mounted')
+  }
+})
+```
+
+**console output**
+```
+mounted child1_1
+mounted child1_2
+mounted child1
+root mounted
+```
+
+#### insertedVnodeQueue chart
+
+结合下面的图, 来理解上面的过程, patch根组件的过程中, 会实例化子组件, patch子组件, 这个过程中收集insertedVnodeQueue, 从而组织mounted钩子的调用顺序
+
+![insertedVnodeQueue](./image/patchComponent/insertedVnodeQueue.svg)
 
 ## 附录
 
@@ -1131,3 +1304,25 @@ const vm = new Vue({
     }).$mount()
 ```
 因为子组件可能是不满足isPatchable的, 此时没必要执行`invokeCreateHooks`的全部逻辑
+
+```js
+  function initComponent (vnode, insertedVnodeQueue) {
+    if (isDef(vnode.data.pendingInsert)) {
+      insertedVnodeQueue.push.apply(insertedVnodeQueue, vnode.data.pendingInsert)
+      vnode.data.pendingInsert = null
+    }
+    vnode.elm = vnode.componentInstance.$el
+    if (isPatchable(vnode)) {
+      invokeCreateHooks(vnode, insertedVnodeQueue)
+      setScope(vnode)
+    } else {
+      // empty component root.
+      // skip all element-related modules except for ref (#3455)
+      registerRef(vnode)
+      // make sure to invoke the insert hook
+      insertedVnodeQueue.push(vnode)
+    }
+  }
+
+
+ ```

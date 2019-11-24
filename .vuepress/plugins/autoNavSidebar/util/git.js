@@ -3,9 +3,14 @@ const path = require('path')
 const os = require('os')
 const debug = require('debug')('myPlugin-autoNavSidebar-git')
 
+let cache = {}
+
 function getGitAddedTimeStamp(filePath) {
+  if (cache[filePath]) {
+    debug('cache earliest')
+    return cache[filePath]
+  }
   let earliest
-  debug('filePath', filePath)
   try {
     // git log 文件夹的时间戳有多个
     const addedTimeStampHistory = spawn
@@ -29,11 +34,17 @@ function getGitAddedTimeStamp(filePath) {
       .split(os.EOL)
       .slice(-1)
       .toString()
-    debug('earliest', earliest)
   } catch (e) {
     debug('catch', e)
     return Date.now()
   }
-  return earliest === '' ? Date.now() : Number(earliest) * 1000
+
+  earliest = earliest === '' ? Date.now() : Number(earliest) * 1000
+
+  debug('filePath', filePath)
+  debug('earliest', earliest)
+
+  cache[filePath] = earliest
+  return earliest
 }
 module.exports = { getGitAddedTimeStamp }

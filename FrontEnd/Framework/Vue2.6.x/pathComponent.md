@@ -78,7 +78,7 @@ new Vue({
 })
 ```
 
-这里我们定义了`components`属性, 或者也可以使用`Vue.component`, 因为我们在render函数中通过传递tag `button-count`指代组件, Vue在render的时候会在`vm.$options.components`(包括原型链`vm.$options.__proto__.components`)中去寻找组件(可以参考[render部分](/FrontEnd/Framework/vue2.6.x/vueRender.html#createelement-2)). 而定义`components`, 或使用`Vue.component`,本质上是在往`vm.$options.components`中去注入组件. 因此在`.vue`文件中使用`template`的时候, 我们通常需要使用`components`属性来注册下组件.
+这里我们定义了`components`属性, 或者也可以使用`Vue.component`, 因为我们在render函数中通过传递tag `button-count`指代组件, Vue在render的时候会在`vm.$options.components`(包括原型链)中去寻找组件(可以参考[render部分](/FrontEnd/Framework/vue2.6.x/vueRender.html#createelement-2)). 而定义`components`, 或使用`Vue.component`,本质上是在往`vm.$options.components`中去注入组件. 因此在`.vue`文件中使用`template`的时候, 我们通常需要使用`components`属性来注册下组件.
 
 当然也可以不需要手动注册组件, 直接利用作用域, 但是这种方式只能配合render函数使用
 
@@ -622,7 +622,7 @@ const opts = vm.$options = Object.create(vm.constructor.options)
 
 首先使用原型链构造`vm.$options`, 并设置相关属性
 
-`vm.$options.parent`为当前正在的`activeInstance`, 我们的例子中是根组件的Vue实例,
+`vm.$options.parent`为`activeInstance`, 即当前正在执行`_update`的实例, 我们的例子中是根组件的Vue实例,
 
 `vm.$options._parentVnode`是子组件在父组件中的placeholder, placeholder中有很多信息, 比如props, 监听的事件, 与slot相关的children(这些信息在render 组件对应vnode时, 保存在`componentOptions`)
 
@@ -765,9 +765,22 @@ render之后, 执行patch逻辑
 ```
 与根组件不同, 子组件empty mount调用`createElm`并没有传`parentElm`, 根组件patch的时候`parentElm`是body, 是将DOM元素插入到DOM中 
 
+```js
+  function insert (parent, elm, ref) {
+    if (isDef(parent)) {
+      if (isDef(ref)) {
+        if (nodeOps.parentNode(ref) === parent) {
+          nodeOps.insertBefore(parent, elm, ref)
+        }
+      } else {
+        nodeOps.appendChild(parent, elm)
+      }
+    }
+  }
+```
+
 由于子组件并没有传`parentElm`, 因此其`createElm`中, `insert`并不会做任何操作, 子组件只会创建DOM元素, 并赋值给vnode.elm, 最终赋值给子组件的`vm.$el`
 
-TODO: invokeInsertHook
 
 
 ```js
@@ -1184,6 +1197,10 @@ new Vue({
 
 **console output**
 ```
+// root created
+// created child1
+// created child1_1
+// created child1_2
 mounted child1_1
 mounted child1_2
 mounted child1
@@ -1296,14 +1313,15 @@ const vm = new Vue({
       components: {
         test: {
           data () {
-            return { ok: true }
+            return { ok: false }
           },
           template: '<div v-if="ok" id="ok" class="inner">test</div>'
         }
       }
     }).$mount()
 ```
-因为子组件可能是不满足isPatchable的, 此时没必要执行`invokeCreateHooks`的全部逻辑
+因为子组件可能是不满足isPatchable的, 此时没必要执行`invokeCreateHooks`的全部逻辑,
+比如class的create hook, 会将placeholder vnode中的 `class="test"`补充到子组件的class中, 如果`this.ok`为false, 子组件是一个comment node, 这个添加class的操作就是不必要的.
 
 ```js
   function initComponent (vnode, insertedVnodeQueue) {

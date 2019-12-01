@@ -68,13 +68,56 @@ export function renderMixin (Vue: Class<Component>) {
 
 TODO:render_Proxy
 
-`render`有两个来源
+`render`有3个来源
 - 用户写的render函数
 - .vue文件中template编译而来, 它内部会使用`vm._c`而非`render(h)`函数的`h`参数(即`vm.$createElement`)
+- 运行时编译template参数
 
 :::tip
-编译出来的render函数类似这种, `with(this){return [_c('div',[[_c('span',[_v("1")]),_v(" "),_c('span',[_v("2")])]],2)]}`
+运行时编译出来的render函数类似这种, `with(this){return [_c('div',[[_c('span',[_v("1")]),_v(" "),_c('span',[_v("2")])]],2)]}`
+
+vue-loader则会[去除with](https://github.com/vuejs/component-compiler-utils/blob/ba7d1673857f8090705e41d0d759827e2b7696ad/lib/compileTemplate.ts#L152), 生成的render函数类似如下
+```js
+function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.a ? _c("div") : _vm._e()
+}
+```
+> [如何看待Vue.js 2.0 的模板编译使用了`with(this)`的语法? - 尤雨溪的回答 - 知乎](https://www.zhihu.com/question/49929356/answer/118534768)
 :::
+
+```js
+export default {
+  render (h) {
+    return
+  }
+}
+```
+如果render函数返回的不是VNode的实例, 则会创建emptyVNode
+
+其等价在.vue中`template`内没有任何内容
+```vue
+new Vue({
+  el: "#app",
+  data () {
+    return {
+      show: false
+    }
+  },
+  template: `<div v-if="show">t</div>`
+})
+```
+经过模板编辑器, 上述`template`会被编译成如下形式
+
+```js
+(function anonymous(
+) {
+with(this){return (show)?_c('div',[_v("t")]):_e()}
+})
+```
+同样也是生成emptyVNode
 
 ## createElement()
 render函数通过调用h函数来生成vnode, h函数是调用了createElement
@@ -159,6 +202,9 @@ export function _createElement (
   }
 }
 ```
+
+当tag满足`!tag === true`, 则会创建emptyVNode
+
 
 `_createElement`首先对children进行格式化. 需要格式化成`Array<VNode>`,
 

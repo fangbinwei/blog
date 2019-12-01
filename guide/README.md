@@ -23,9 +23,6 @@ export default {
       thisYear: new Date().getFullYear()
     }
   },
-  created () {
-    console.log(this.sameYearPosts)
-  },
   computed: {
     posts () {
       const pages = this.$site.pages

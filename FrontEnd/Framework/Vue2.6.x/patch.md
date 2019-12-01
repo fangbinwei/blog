@@ -186,9 +186,9 @@ patch除了包括vNode更新时用到的相关对比算法以外, 还有另外�
 
 `createPatchFunction`利用闭包将modules中的钩子函数注册到`cbs`对象中, 并返回一个`patch`函数
 
+
 ```js
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
-    // 移除时
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
@@ -218,7 +218,6 @@ patch除了包括vNode更新时用到的相关对比算法以外, 还有另外�
 ```
 
 可以看到`patch`函数主要主要处理如下几种情况
-- vnode移除时
 - vnode创建时 (`oldVnode`传入`undefined`, 即调用`$mount`, 不传入`el`)
 - vnode更新时 
   - 状态更新触发视图更新时, 且满足sameVnode
@@ -228,6 +227,31 @@ patch除了包括vNode更新时用到的相关对比算法以外, 还有另外�
 :::tip
 `!isRealElement && sameVnode(oldVnode, vnode)`这个判断有点疑问, 我觉得当满足sameVnode的时候, 能够保证`!isRealElement`为`true`, 而[vue以前的代码](https://github.com/vuejs/vue/commit/3245ee6fe4588719483b909993e737682fa3cb3d)确实只有`sameVnode`这一个判断条件, 可能是为了某种我暂时没有想到的边界条件
 :::
+
+在patch最前面有这样一段逻辑
+```js
+    if (isUndef(vnode)) {
+      if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
+      return
+    }
+```
+当vnode未定义, 而oldVnode有定义时, 则执行destroy hook, 包括module中的destroy hook和组件的destroy hook.
+
+这段逻辑其实和patch的关系并不大, 因为正常的patch过程, vnode再不济也是emptyVNode, 
+
+**src/core/instance/lifecycle.js**
+```js
+  Vue.prototype.$destroy = function () {
+    //...
+    // invoke destroy hooks on current rendered tree
+    vm.__patch__(vm._vnode, null)
+    // fire destroyed hook
+    callHook(vm, 'destroyed')
+    //...    
+  }
+```
+主要是为了处理一些边界情况, 可以查看[相关提交和issue](https://github.com/vuejs/vue/commit/6e96a657d8c96d48f1ba6ad051aae1eff0d58c73)
+
 
 ### vnode创建时
 
@@ -664,7 +688,7 @@ var a = new Vue({
   },
   render (h) {
     if (this.test) {
-    return h('div',{class: 'test'}, 'test')
+    return h('div',{class: 'test', ref: 'test'}, 'test')
     } else {
       return h('a', {}, 'a')
     }

@@ -20,7 +20,7 @@ jobs:
         ./deploy.sh
       env:
         GITHUB_PAGE: true
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ACCESS_TOKEN: ${{ secrets.PAT }}
         BASE_BRANCH: master
         BRANCH: gh-pages
         FOLDER: .vuepress/dist

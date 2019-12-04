@@ -6,6 +6,7 @@
         v-if="data.heroImage"
         :src="$withBase(data.heroImage)"
         :alt="data.heroAlt || 'hero'"
+        @dragstart.prevent
       />
 
       <h1 v-if="data.heroText !== null" id="main-title">
@@ -118,6 +119,7 @@ export default {
 
 <style lang="stylus">
 .home
+  user-select none
   padding $navbarHeight 2rem 0
   max-width 960px
   margin 0px auto

@@ -2,12 +2,24 @@
   <main class="home" aria-labelledby="main-title">
     <canvas ref="canvas" class="bg-canvas"></canvas>
     <header class="hero">
-      <img
-        v-if="data.heroImage"
-        :src="$withBase(data.heroImage)"
-        :alt="data.heroAlt || 'hero'"
-        @dragstart.prevent
-      />
+      <section class="header-image-wrap">
+        <transition name="fade" mode="out-in">
+          <img
+            v-if="waiting && data.heroImage"
+            key="waiting"
+            :src="$withBase(data.waitingImage)"
+            alt="waiting"
+          />
+          <img
+            v-else
+            key="loaded"
+            class="loaded"
+            :src="$withBase(data.heroImage)"
+            :alt="data.heroAlt || 'hero'"
+            @dragstart.prevent
+          />
+        </transition>
+      </section>
 
       <h1 v-if="data.heroText !== null" id="main-title">
         {{ data.heroText || $title || 'Hello' }}
@@ -46,6 +58,11 @@ import NavLink from '@theme/components/NavLink.vue'
 
 export default {
   components: { NavLink },
+  data() {
+    return {
+      waiting: true
+    }
+  },
 
   computed: {
     data() {
@@ -60,62 +77,90 @@ export default {
     }
   },
   mounted() {
-    const c = this.$refs.canvas
-    let x = c.getContext('2d'),
-      pr = window.devicePixelRatio || 1,
-      w = window.innerWidth,
-      h = window.innerHeight,
-      f = 90,
-      q,
-      m = Math,
-      r = 0,
-      u = m.PI * 2,
-      v = m.cos,
-      z = m.random
-    c.width = w * pr
-    c.height = h * pr
-    c.style.width = w + 'px'
-    c.style.height = h + 'px'
+    this.initCanvasBG()
+    this.loadHeaderImage(this.$withBase(this.data.heroImage))
+  },
+  methods: {
+    loadHeaderImage(url) {
+      this.imageLazyLoad(url, function() {
+        this.waiting = false
+      })
+    },
+    imageLazyLoad(url, callback) {
+      const img = new Image()
+      img.src = url
+      img.onload = () => {
+        callback.call(this)
+      }
+    },
+    initCanvasBG() {
+      const c = this.$refs.canvas
+      let x = c.getContext('2d'),
+        pr = window.devicePixelRatio || 1,
+        w = window.innerWidth,
+        h = window.innerHeight,
+        f = 90,
+        q,
+        m = Math,
+        r = 0,
+        u = m.PI * 2,
+        v = m.cos,
+        z = m.random
+      c.width = w * pr
+      c.height = h * pr
+      c.style.width = w + 'px'
+      c.style.height = h + 'px'
 
-    x.scale(pr, pr)
-    x.globalAlpha = 0.6
-    function i(e) {
-      x.clearRect(0, 0, w, h)
-      q = [{ x: 0, y: h * 0.7 + f }, { x: 0, y: h * 0.7 - f }]
-      while (q[1].x < w + f) d(q[0], q[1])
+      x.scale(pr, pr)
+      x.globalAlpha = 0.6
+      function i(e) {
+        x.clearRect(0, 0, w, h)
+        q = [{ x: 0, y: h * 0.7 + f }, { x: 0, y: h * 0.7 - f }]
+        while (q[1].x < w + f) d(q[0], q[1])
 
-      e && e.preventDefault()
+        e && e.preventDefault()
+      }
+      function d(i, j) {
+        x.beginPath()
+        x.moveTo(i.x, i.y)
+        x.lineTo(j.x, j.y)
+        var k = j.x + (z() * 2 - 0.25) * f,
+          n = y(j.y)
+        x.lineTo(k, n)
+        x.closePath()
+        r -= u / -50
+        x.fillStyle =
+          '#' +
+          (
+            ((v(r) * 127 + 128) << 16) |
+            ((v(r + u / 3) * 127 + 128) << 8) |
+            (v(r + (u / 3) * 2) * 127 + 128)
+          ).toString(16)
+        x.fill()
+        q[0] = q[1]
+        q[1] = { x: k, y: n }
+      }
+      function y(p) {
+        var t = p + (z() * 2 - 1.1) * f
+        return t > h || t < 0 ? y(p) : t
+      }
+      c.addEventListener('click', i)
+      c.addEventListener('touchstart', i, { passive: false })
+      i()
     }
-    function d(i, j) {
-      x.beginPath()
-      x.moveTo(i.x, i.y)
-      x.lineTo(j.x, j.y)
-      var k = j.x + (z() * 2 - 0.25) * f,
-        n = y(j.y)
-      x.lineTo(k, n)
-      x.closePath()
-      r -= u / -50
-      x.fillStyle =
-        '#' +
-        (
-          ((v(r) * 127 + 128) << 16) |
-          ((v(r + u / 3) * 127 + 128) << 8) |
-          (v(r + (u / 3) * 2) * 127 + 128)
-        ).toString(16)
-      x.fill()
-      q[0] = q[1]
-      q[1] = { x: k, y: n }
-    }
-    function y(p) {
-      var t = p + (z() * 2 - 1.1) * f
-      return t > h || t < 0 ? y(p) : t
-    }
-    c.addEventListener('click', i)
-    c.addEventListener('touchstart', i, { passive: false })
-    i()
   }
 }
 </script>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
 
 <style lang="stylus">
 .home
@@ -131,11 +176,19 @@ export default {
   .hero
     position relative
     text-align center
+    .header-image-wrap
+      height 280px
+      display flex
+      align-items center
+      justify-content center
+      margin 3rem auto 1.5rem
     img
+      &.loaded
+        filter drop-shadow(2px 4px 6px black)
+      border-radius 8px
       max-width: 100%
       max-height 280px
       display block
-      margin 3rem auto 1.5rem
     h1
       font-size 3rem
     h1, .description, .action

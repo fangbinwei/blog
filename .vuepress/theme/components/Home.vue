@@ -78,7 +78,12 @@ export default {
   },
   mounted() {
     this.initCanvasBG()
-    this.loadHeaderImage(this.$withBase(this.data.heroImage))
+  },
+  created() {
+    const isClient = typeof window !== 'undefined'
+    if (isClient) {
+      this.loadHeaderImage(this.$withBase(this.data.heroImage))
+    }
   },
   methods: {
     loadHeaderImage(url) {
@@ -89,6 +94,10 @@ export default {
     imageLazyLoad(url, callback) {
       const img = new Image()
       img.src = url
+      if (img.complete) {
+        callback.call(this)
+        return
+      }
       img.onload = () => {
         callback.call(this)
       }

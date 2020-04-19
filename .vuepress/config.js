@@ -1,5 +1,6 @@
 module.exports = {
-  base: process.env.GITHUB_PAGE ? '/blog/' : '/',
+  // base: process.env.GITHUB_PAGE ? '/blog/' : '/',
+  base: '/',
   title: `Sleepwalker's Blog`,
   description: `It's a technology blog focuses on front-end development, but not only that.`,
   plugins: [

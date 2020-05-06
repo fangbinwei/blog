@@ -2,7 +2,7 @@
 home: true
 heroText: null
 waitingImage: /heart.gif
-heroImage: /banner.png
+heroImage: https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/banner.png
 tagline: Break Out of Your Comfort Zone
 actionText: Archive →
 actionLink: /guide/

@@ -25,7 +25,7 @@ myCar.setSpeed(666) // Accelerating to 666
 ```
 ## SyncHook UML
 
-![uml](./images/tapable2/tapable2_synchook_uml.svg)
+![uml](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/tapable2_synchook_uml.svg)
 
 ```js
 

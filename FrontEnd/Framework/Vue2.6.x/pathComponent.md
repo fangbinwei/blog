@@ -142,7 +142,7 @@ new Vue({
 
 这个例子中我们render得到到的tree 如下:
 
-![componentRender](./image/patchComponent/componentRender.svg)
+![componentRender](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Framework/Vue2.6.x/patchComponent/componentRender.svg)
 
 然后就需要根据这个vNode tree, 通过patch得到真实的DOM元素.
 
@@ -449,7 +449,7 @@ new vnode.componentOptions.Ctor({
 ```
 这里的`_parentVnode`就是Child1 vnode, 我通常称其为子组件在父组件中的placeholder
 
-![componentRender](./image/patchComponent/componentRender2.svg)
+![componentRender](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Framework/Vue2.6.x/patchComponent/componentRender2.svg)
 
 而parent则是`activeInstance`
 ```js
@@ -891,7 +891,7 @@ if (isDef(vnode.componentInstance)) {
 
 从结果上来看, 当我们patch下面这个vnode tree
 
-![componentRender](./image/patchComponent/componentRender.svg)
+![componentRender](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Framework/Vue2.6.x/patchComponent/componentRender.svg)
 
 其流程如下, 
 
@@ -1037,10 +1037,10 @@ export function mountComponent (
 ### chart
 
 #### patch flowchart
-![componentRender](./image/patchComponent/patchComponent.svg)
+![componentRender](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Framework/Vue2.6.x/patchComponent/patchComponent.svg)
 
 #### vnode,vm relation
-![componentRenderRelation](./image/patchComponent/patchComponentRelation.svg)
+![componentRenderRelation](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Framework/Vue2.6.x/patchComponent/patchComponentRelation.svg)
 
 
 ### insertedVnodeQueue
@@ -1211,7 +1211,7 @@ root mounted
 
 结合下面的图, 来理解上面的过程, patch根组件的过程中, 会实例化子组件, patch子组件, 这个过程中收集insertedVnodeQueue, 从而组织mounted钩子的调用顺序
 
-![insertedVnodeQueue](./image/patchComponent/insertedVnodeQueue.svg)
+![insertedVnodeQueue](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Framework/Vue2.6.x/patchComponent/insertedVnodeQueue.svg)
 
 ## 附录
 

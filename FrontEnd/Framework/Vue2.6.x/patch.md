@@ -376,6 +376,10 @@ vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
 ```
 `vm.$el`为页面中id为app的div元素, `vnode`为根组件的[virtual DOM](/2019-10-05-vuerender/#case-study-分析个栗子), `hydrating`为服务端渲染相关, 为`false`, `removeOnly`则用于组件`transition-group`
 
+在vue源码中你可能会经常看到`hydrating`这个与ssr相关的东西, 这里推荐一篇知乎的文章
+> [不只是同构应用（isomorphic 工程化你所忽略的细节） - Lucas HC的文章 - 知乎](https://zhuanlan.zhihu.com/p/79203739)
+
+
 ```js
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
     if (isUndef(vnode)) {
@@ -673,7 +677,7 @@ vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
 ```
 
 ### chart
-![patch](./image/patch/patch.svg)
+![patch](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Framework/Vue2.6.x/patch/patch.svg)
 
 
 ## 更新

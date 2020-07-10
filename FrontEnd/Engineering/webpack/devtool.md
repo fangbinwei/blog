@@ -141,5 +141,5 @@ inline和eval-xxx无法同时实现的, inline 将整个js文件的sourceMap以`
 eval("...//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,...\n//# sourceURL=webpack-internal:///./src/hello.js\n");
 ```
 
-大致了解后, 具体查官方文档就可以了
+大致了解后, 具体查官方文档就可以了
 > https://webpack.js.org/configuration/devtool/

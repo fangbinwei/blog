@@ -763,7 +763,7 @@ render之后, 执行patch逻辑
     }
   }
 ```
-与根组件不同, 子组件empty mount调用`createElm`并没有传`parentElm`, 根组件patch的时候`parentElm`是body, 是将DOM元素插入到DOM中 
+与根组件不同, 子组件empty mount调用`createElm`并没有传`parentElm`, 根组件patch的时候`parentElm`是body, 是将DOM元素插入到DOM中
 
 ```js
   function insert (parent, elm, ref) {

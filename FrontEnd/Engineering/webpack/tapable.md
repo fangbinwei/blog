@@ -388,7 +388,7 @@ tapableInstance.applyPluginsParallelBailResult('a', function(err, arg) {
 applyPluginsAsync***的方法, 虽说是针对注册的回调函数为异步的情况, 但是如果注册的回调函数是同步的, 也是适用的.
 :::
 ## 性能
-在tapable0.x中的代码中还有`applyPlugins0`,`applyPlugins1`等方法, 内部使用函数的`call`来代替`apply`来执行回调, 从而提升性能, [jsperf测试代码](https://jsperf.com/tapable)
+在tapable0.x中的代码中还有`applyPlugins0`,`applyPlugins1`等方法, 内部使用函数的`call`来代替`apply`来执行回调, 从而提升性能, [jsperf测试代码](https://jsperf.com/tapable)
 
 ## 应用场景
 TODO:

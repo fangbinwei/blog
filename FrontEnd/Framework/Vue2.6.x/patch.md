@@ -218,7 +218,7 @@ patch除了包括vNode更新时用到的相关对比算法以外, 还有另外�
 ```
 
 可以看到`patch`函数主要主要处理如下几种情况
-- vnode创建时 (`oldVnode`传入`undefined`, 即调用`$mount`, 不传入`el`)
+- vnode创建时 (`oldVnode`传入`undefined`, 即调用`$mount`, 不传入`el`)
 - vnode更新时 
   - 状态更新触发视图更新时, 且满足sameVnode
   - 传入了el参数, 此时`oldVnode`为真实的DOM元素

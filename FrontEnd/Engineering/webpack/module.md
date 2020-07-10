@@ -348,7 +348,7 @@ console.log(_b__WEBPACK_IMPORTED_MODULE_0___default.a, _b__WEBPACK_IMPORTED_MODU
 ```
 因为我们加载的commonjs有可能是通过打包工具从esModule转化过来的, 这种从esModule转化过来的commonjs模块, 会有`__esModule`属性, 这种模块, 它的default export就在‘default’属性上, 而对于传统的commonjs来说, 我们就需要加载其`module.exports`作为其default export. (假如我们的`src/b.js`中的代码是网上找来的代码, 别人是通过babel打包出来的, 那它就可能有`__esModule`属性Jj)
 
-babel/ts的处理和webpack类似, 但是比webpack更为周到. 
+babel/ts的处理和webpack类似, 但是比webpack更为周到.
 
 考虑下面这种情况
 
@@ -623,7 +623,7 @@ console.log(namedB)
 
 ```js
 module.exports = require("lib-c");
-```
+```
 
 处理后变为
 ```js
@@ -643,7 +643,7 @@ module.exports = require("lib-c");
 
 无论是通过使用npm包的方式, 还是使用自身代码的方式, 对于webpack打包都没有区别, 无非就是npm包的代码在本地node_modules文件夹中. 对于webpack来说, 他们就是一个个模块, 只是磁盘位置不同.
 
-### 需要注意的
+### 需要注意的
 
 可以看到webpack打包的库`lib-b`是有一点臃肿的, webpack在生产环境下有`ModuleConcatenationPlugin`来做优化, rollup在这方面也有一定优势, 所以通常打包一些库文件, rollup是比较受欢迎的.
 
@@ -704,7 +704,7 @@ export default 'defaultB'
 
 起初`jsonArray`, `window['webpackJsonp']`都指向`push`被修改过的数组.
 
-在调用`jsonpArray = jsonpArray.slice();`之后, `jsonpArray`重新指向了`push`为原生的数组. 而`window['webpackJsonp']`的`push`仍旧是被修改过的.
+在调用`jsonpArray = jsonpArray.slice();`之后, `jsonpArray`重新指向了`push`为原生的数组. 而`window['webpackJsonp']`的`push`仍旧是被修改过的.
 
 当`0.js`中的代码执行, 将chunk push到`window['webpackJsonp']`的时候, 就执行了`webpackJsonpCallback`
 
@@ -926,6 +926,9 @@ mode 9将执行`(mode & 1)`, `(mode & 8)`, mode 9 处理项目中源代码为esM
 
 ## 参考
 > https://zhuanlan.zhihu.com/p/97737035
+
 > https://medium.com/webpack/webpack-4-import-and-commonjs-d619d626b655
+
 > https://zhuanlan.zhihu.com/p/84204506
+
 > https://developer.aliyun.com/article/755252

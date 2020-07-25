@@ -25,7 +25,7 @@ myCar.setSpeed(666) // Accelerating to 666
 ```
 ## SyncHook UML
 
-![uml](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/tapable2/tapable2_synchook_uml.svg)
+![uml](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/tapable2/tapable2_synchook_uml.svg)
 
 ```js
 
@@ -164,7 +164,7 @@ _fn1(p1, p2);
 ```
 默认插件的`stage`为0 , 根据`stage`从小到大, 使用插入排序
 
-![2020-07-19-18-44-42](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/tapable2/2020-07-19-18-44-42_8e7e27a4.png)
+![2020-07-19-18-44-42](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/tapable2/2020-07-19-18-44-42_8e7e27a4.png)
 
 而完整的`_insert`还由一个`before`变量来控制排序, `before`优先级比`stage`高.
 
@@ -206,7 +206,7 @@ _fn1(p1, p2);
 	}
 ```
 
-![2020-07-19-19-11-51](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/tapable2/2020-07-19-19-11-51_47a8cd8f.png)
+![2020-07-19-19-11-51](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/tapable2/2020-07-19-19-11-51_47a8cd8f.png)
 
 ### call
 在使用`tap`收集完回调后, 使用`call`则可以执行这些回调函数, 但是并不是通过遍历`taps`数组执行, 而是使用`call`去生成一个函数, 并执行
@@ -425,5 +425,5 @@ class SyncHookCodeFactory extends HookCodeFactory {
 ```
 
 各个子类Hook其`args`, `header`的代码是通用的, 而`content`则由各个子类自己实现.
-![2020-07-19-21-55-22](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/tapable2/2020-07-19-21-55-22_4efb1bd0.png)
+![2020-07-19-21-55-22](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/tapable2/2020-07-19-21-55-22_4efb1bd0.png)
 

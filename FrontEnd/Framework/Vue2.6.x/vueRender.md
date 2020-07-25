@@ -598,7 +598,7 @@ new Vue({
 1. 创建Child1 vnode
 2. 创建Child2 vnode
 3. 创建div vnode(会normalize children 创建textVnode)
-![render_root](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Framework/Vue2.6.x/vueRender/render_root.jpg)
+![render_root](https://image.fangbinwei.cn/FrontEnd/Framework/Vue2.6.x/vueRender/render_root.jpg)
 
 由于函数的调用顺序, 是先创建children的vnode, 再创建其外层vnode(可能会受normalize影响). 这里需要注意, 创建Child1 vnode和执行Child1的render()方法是不同的概念. 这也就是Vue组件化的本质, 子组件在父组件中的vnode可以理解为一个占位符placeholder, 为父子组件建立连接.
 

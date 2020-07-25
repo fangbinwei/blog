@@ -677,7 +677,7 @@ vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
 ```
 
 ### chart
-![patch](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Framework/Vue2.6.x/patch/patch.svg)
+![patch](https://image.fangbinwei.cn/FrontEnd/Framework/Vue2.6.x/patch/patch.svg)
 
 
 ## 更新

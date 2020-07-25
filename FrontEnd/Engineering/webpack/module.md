@@ -32,7 +32,7 @@ export default 'defaultB'
 
 默认webpack打包出来的是可以直接运行在web上的代码
 
-![webpackIIFE](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/module/webpackIIFE_03d266e3.svg)
+![webpackIIFE](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/module/webpackIIFE_03d266e3.svg)
 
 
 
@@ -289,7 +289,7 @@ module.exports = function c() {console.log('defaultC')}
 ```
 其依赖关系如下, 
 
-![esmodule_commonjs](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/module/esmodule_commonjs_3edeb466.svg)
+![esmodule_commonjs](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/module/esmodule_commonjs_3edeb466.svg)
 
 
 
@@ -633,11 +633,11 @@ module.exports = require("lib-c");
 
 整体代码结构如下,
 
-![external_structure](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/module/external_structure_37f1ba4e.svg)
+![external_structure](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/module/external_structure_37f1ba4e.svg)
 
 模块的依赖图如下,
 
-![external_dep](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/module/external_dep_076c94ba.svg)
+![external_dep](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/module/external_dep_076c94ba.svg)
 
 我们可以发现, 这个模块依赖图和上文提到的场景['使用esmodule语法导入commonjs模块'](#使用esmodule语法导入commonjs模块)中的依赖图非常类似. 我们通过打包发布npm包的形式, 达到共享代码, 而这个npm包中的一些通用代码, 通过external的方式避免将代码硬编码到自己的包中, 而最终由webpack来组织这些代码.
 
@@ -919,7 +919,7 @@ __webpack_require__.t = function(value, mode) {
 mode 9将执行`(mode & 1)`, `(mode & 8)`, mode 9 处理项目中源代码为esModule的那些模块
 
 ### flowchart
-![dynamic_import_flowchart](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/module/dynamic_import_flowchart_4ec3df6d.svg)
+![dynamic_import_flowchart](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/module/dynamic_import_flowchart_4ec3df6d.svg)
 
 
 

@@ -18,7 +18,7 @@ server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 ```
-![node http demo](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/nodehttpde_1539530232_1360319875.png)
+![node http demo](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/nodehttpde_1539530232_1360319875.png)
 
 
 这是node官网的一段示例, 若干行代码搭建了一个http服务器.
@@ -39,7 +39,7 @@ server.listen(port, hostname, () => {
 可以发现, 其实这些任务其实可以排个序, 中间件就是帮助我们完成这个任务.
 
 ## 中间件
-![middleware](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/middleware_1540233808_732314898.png)
+![middleware](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/middleware_1540233808_732314898.png)
 
 中间件可以把服务端的操作解耦开来. 不同的中间件各司其职, 如上图——使用中间件实现一个逻辑简单的服务器, static cache中间件可以响应静态文件, router中间件可以用来响应API.
 
@@ -146,19 +146,19 @@ http.createServer(function app (req, res) {
 ```
 
 #### 同步代码示例图1.0
-![connect_sync](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/connect_sy_1539626102_272386920.png)
+![connect_sync](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/connect_sy_1539626102_272386920.png)
 
 stack中存放着通过use加入中间件, 当请求到达时, app函数调用内部的next(), 该next()函数实现如下功能:
 1. 读取stack
 2. 路径匹配 ? 调用stack[index].handler(req, res, next) : 继续调用next()
 
 #### next()示例图
-![](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/1539626134_1719312683.png)
+![](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/1539626134_1719312683.png)
 
 next()函数的作用就是上图虚线所框选部分, 读取stack, 并进行路径匹配, 路径不匹配则继续调用next()函数.
 
 #### 同步代码示例2.0
-![connect_sync2](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/connect_sy_1540237857_787709729.png)
+![connect_sync2](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/connect_sy_1540237857_787709729.png)
 
 ### connect中间件执行异步代码
 ```js
@@ -179,7 +179,7 @@ app.use((req, res, next) => {
 //<-1 middleware after next
 //        ->final middleware
 ```
-![](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/1540155763_294155741.png)
+![](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/1540155763_294155741.png)
 (middleware2 中的next()可有可无)
 
 异步代码执行的顺序, 不同于同步代码.
@@ -187,7 +187,7 @@ app.use((req, res, next) => {
 异步代码和同步代码的执行对于异步操作来说, 需要注意的地方在于如何进行错误处理.
 
 ### 错误处理
-![](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/1540143921_26349576.png)
+![](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/1540143921_26349576.png)
 
 connect中, 中间件的执行是被try catch包裹的, 捕捉到err, 就会传给next()函数.
 
@@ -268,7 +268,7 @@ app.use('/foo', router)
 http.createServer(app).listen(3000)
 ```
 #### 路由嵌套的原理
-![](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/1540239367_1948215195.png)
+![](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/1540239367_1948215195.png)
 
 ### 代码演示, 解析前端发送的请求, content-type: application/json
 ```js
@@ -361,7 +361,7 @@ ctx.body调用的是ctx.response.body, 对应一个setter方法, 它设置ctx.bo
 在所有中间件执行完成后, 若中间件没有响应请求, koa会根据ctx.body的值, 响应请求, 所以响应请求并不一定需要像connect, express那样耦合在中间件中.
 
 ### ctx
-![](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/1540158338_1654230173.png)
+![](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/1540158338_1654230173.png)
 
 ### koa中间件
 #### async/await写法
@@ -390,7 +390,7 @@ app.use((ctx, next) => {
 *正确书写koa中间件, 可以保证响应请求时, 代码的执行顺序.*
 
 #### 中间件处理示意图
-![koa middleware](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/BackEnd/Nodejs/webFramework/koamiddlew_1541006132_843532784.png)
+![koa middleware](https://image.fangbinwei.cn/BackEnd/Nodejs/webFramework/koamiddlew_1541006132_843532784.png)
 
 koa的中间件处理方式, 和connect的本质区别在于其next()函数, koa的next()函数返回的是promise对象, 只有在该promise为fulfilled的时候, 才会执行`await next()`以后的代码.
 

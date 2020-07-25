@@ -102,7 +102,7 @@ Tapable.prototype.plugin = function plugin(name, fn) {
 `void applyPlugins(name: string, args: any...)
 `
 
-![applyPlugins](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/tapable/applyPlugins.svg)
+![applyPlugins](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/tapable/applyPlugins.svg)
 
 针对注册的回调函数为同步函数
 
@@ -122,7 +122,7 @@ Tapable.prototype.applyPlugins = function applyPlugins(name) {
 `any applyPluginsWaterfall(name: string, init: any, args: any...)
 `
 
-![applyPluginsWaterfall](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/tapable/applyPluginsWaterfall.svg)
+![applyPluginsWaterfall](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/tapable/applyPluginsWaterfall.svg)
 
 针对回调函数为同步函数, 使用`Waterfall`的方式
 
@@ -146,7 +146,7 @@ waterfall的方式会将上一个callback return的值,传给下一个callback.
 ### applyPluginsBailResult
 `any applyPluginsBailResult(name: string, args: any...)
 `
-![applyPluginsBailResult](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/tapable/applyPluginsBailResult.svg)
+![applyPluginsBailResult](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/tapable/applyPluginsBailResult.svg)
 
 针对回调函数为同步函数, 使用`Bail`的方式
 
@@ -175,7 +175,7 @@ applyPluginsAsyncSeries(
 
 ```
 
-![applyPluginsAsyncSeries](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/tapable/applyPluginsAsyncSeries.svg)
+![applyPluginsAsyncSeries](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/tapable/applyPluginsAsyncSeries.svg)
 
 注册的回调函数是异步的, 可以使用这个方法来保证各个回调函数是顺序执行的
 ```js
@@ -224,7 +224,7 @@ applyPluginsAsyncWaterfall(
 )
 
 ```
-![applyPluginsAsyncWaterfall](https://fangbinwei-blog-image.oss-cn-shanghai.aliyuncs.com/FrontEnd/Engineering/webpack/tapable/applyPluginsAsyncWaterfall.svg)
+![applyPluginsAsyncWaterfall](https://image.fangbinwei.cn/FrontEnd/Engineering/webpack/tapable/applyPluginsAsyncWaterfall.svg)
 
 注册的回调函数是异步的, 使用`Waterfall`的方式
 

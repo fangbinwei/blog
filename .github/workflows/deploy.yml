@@ -1,4 +1,4 @@
-name: deploy github pages
+name: deploy to github pages and aliyun OSS
 
 on:
   push:
@@ -31,8 +31,19 @@ jobs:
           ${{ runner.os }}-yarn-
     - run: yarn install
     - run: yarn docs:build
+    - name: upload files to OSS
+      uses: fangbinwei/aliyun-oss-website-action@v1
+      with:
+          accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
+          accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
+          bucket: solaz-blog
+          endpoint: blog.solaz.top
+          cname: true
+          folder: .vuepress/dist
+          exclude: |
+            CNAME
 
-    - name: build vuepress to github page
+    - name: upload to github page
       shell: bash
       run: |
         chmod +x deploy.sh

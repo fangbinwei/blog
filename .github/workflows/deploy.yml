@@ -37,7 +37,7 @@ jobs:
           accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
           accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
           bucket: solaz
-          endpoint: https://blog.solaz.top
+          endpoint: http://solaz.oss-cn-hangzhou.aliyuncs.com
           cname: true
           folder: .vuepress/dist
           exclude: |

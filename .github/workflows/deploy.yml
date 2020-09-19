@@ -32,15 +32,15 @@ jobs:
     - run: yarn install
     - run: yarn docs:build
     - name: upload files to OSS
-      uses: fangbinwei/aliyun-oss-website-action@v1
-      with:
-          accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
-          accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
-          bucket: solaz
-          endpoint: http://solaz.oss-cn-hangzhou.aliyuncs.com
-          cname: true
-          folder: .vuepress/dist
-          exclude: |
+      uses: docker://fangbinwei/aliyun-oss-website-action
+      env:
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
+          BUCKET: solaz
+          ENDPOINT: http://solaz.oss-cn-hangzhou.aliyuncs.com
+          CNAME: true
+          FOLDER: .vuepress/dist
+          EXCLUDE: |
             CNAME
 
     - name: upload to github page

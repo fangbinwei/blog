@@ -36,8 +36,8 @@ jobs:
       with:
           accessKeyId: ${{ secrets.ACCESS_KEY_ID }}
           accessKeySecret: ${{ secrets.ACCESS_KEY_SECRET }}
-          bucket: solaz-blog
-          endpoint: blog.solaz.top
+          bucket: solaz
+          endpoint: https://blog.solaz.top
           cname: true
           folder: .vuepress/dist
           exclude: |

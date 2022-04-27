@@ -530,7 +530,7 @@ new Vue({
 
 > 记得有人说过类似的一句话, 框架中的virtual dom关键点在于其结合了一系列的钩子
 
-在注入钩子之后, 就创建组件对应的vnode, 在componentOption中保存了创建子组件所需要的构造函数, 从父组件接受的propsData, 父组建监听的listener, slot相关的children
+在注入钩子之后, 就创建组件对应的vnode, 在componentOption中保存了创建子组件所需要的构造函数, 从父组件接受的propsData, 父组件监听的listener, slot相关的children
 ```js
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,

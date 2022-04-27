@@ -43,14 +43,14 @@ jobs:
           EXCLUDE: |
             CNAME
 
-    - name: upload to github page
-      shell: bash
-      run: |
-        chmod +x deploy.sh
-        ./deploy.sh
-      env:
-        GITHUB_PAGE: true
-        ACCESS_TOKEN: ${{ secrets.PAT }}
-        BASE_BRANCH: master
-        BRANCH: gh-pages
-        FOLDER: .vuepress/dist
+    # - name: upload to github page
+    #   shell: bash
+    #   run: |
+    #     chmod +x deploy.sh
+    #     ./deploy.sh
+    #   env:
+    #     GITHUB_PAGE: true
+    #     ACCESS_TOKEN: ${{ secrets.PAT }}
+    #     BASE_BRANCH: master
+    #     BRANCH: gh-pages
+    #     FOLDER: .vuepress/dist

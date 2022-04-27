@@ -37,6 +37,7 @@ jobs:
           ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
           ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
           BUCKET: solaz
+          INCREMENTAL: true
           ENDPOINT: http://solaz.oss-cn-hangzhou.aliyuncs.com
           CNAME: true
           FOLDER: .vuepress/dist

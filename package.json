@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fangbinwei/Thinking.git"
+    "url": "git+https://github.com/fangbinwei/blog.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/fangbinwei/Thinking/issues"
+    "url": "https://github.com/fangbinwei/blog/issues"
   },
-  "homepage": "https://github.com/fangbinwei/Thinking#readme",
+  "homepage": "https://github.com/fangbinwei/blog#readme",
   "devDependencies": {
     "@vuepress/plugin-medium-zoom": "^1.1.0",
     "cross-env": "^6.0.3",
